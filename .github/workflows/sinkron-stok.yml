@@ -31,6 +31,10 @@ jobs:
         env:
           PORTAL_USER: ${{ secrets.PORTAL_USER }}
           PORTAL_PASS: ${{ secrets.PORTAL_PASS }}
+          # Dua yang di bawah boleh kosong: bila Sheet belum disetel atau sedang
+          # tak bisa dihubungi, skrip memakai sku-tampil.json sebagai cadangan.
+          HUB_API_URL: ${{ secrets.HUB_API_URL }}
+          HUB_TOKEN: ${{ secrets.HUB_TOKEN }}
         run: python scripts/sinkron.py
 
       - name: Pastikan tidak ada angka stok yang ikut terbawa
@@ -55,7 +59,9 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/katalog.json
+          # sku-tampil.json ikut karena ia salinan centang terakhir dari Sheet —
+          # sekaligus riwayat siapa mengubah apa, dan cadangan bila Sheet mati.
+          git add data/katalog.json sku-tampil.json
           if git diff --staged --quiet; then
             echo "Stok tidak berubah — tidak ada commit."
           else

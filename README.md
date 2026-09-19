@@ -12,7 +12,8 @@ Sumber stok adalah WMS di [portal.nawinow.com](https://portal.nawinow.com/). Hub
 |---|---|---|
 | **1a** | Kerangka UI + katalog stok | ✅ selesai |
 | **1b** | Sinkron GitHub Actions dari WMS + whitelist SKU | ✅ selesai — tinggal pasang secret |
-| **1c** | Lapisan reseller: login, angka pasti, stok toko | belum |
+| **1c** | Daftar centang SKU di Google Sheets | ✅ selesai — tinggal deploy |
+| **1d** | Lapisan reseller: login, angka pasti, stok toko | belum |
 | **2** | Watchlist, alert restock, draft pesanan, PWA, tren stok | belum |
 
 ## Menjalankan secara lokal
@@ -61,7 +62,8 @@ Tanpa mengubah satu baris pun kode WMS — repo `mitshuno/picking-packing` tidak
 1. `POST /api/v1/auth/login` ke Portal → access token
 2. `GET /wms/api/reports/product-analytics` → satu panggilan, sudah memuat stok,
    laju jual, `days_of_stock`, dan klasifikasi fast/slow
-3. Saring lewat `sku-tampil.json`, ubah angka jadi status, tulis `data/katalog.json`
+3. Kirim daftar SKU ke Google Sheets, terima daftar centangnya, saring,
+   ubah angka jadi status, tulis `data/katalog.json`
 4. Periksa ulang keluaran — bila ada satu saja nilai angka, workflow berhenti sebelum commit
 5. Commit hanya bila isinya berubah
 
@@ -75,22 +77,48 @@ Skripnya memakai pustaka standar Python saja — tidak ada `pip install`.
 |---|---|
 | `PORTAL_USER` | username akun Portal untuk sinkron |
 | `PORTAL_PASS` | password akun tersebut |
+| `HUB_API_URL` | URL web app Apps Script (berakhiran `/exec`) |
+| `HUB_TOKEN` | `KODE_AKSES` di Apps Script |
 
-Jangan pernah menaruh keduanya di berkas mana pun dalam repo ini.
+Dua yang terakhir boleh dikosongkan — tanpa keduanya sinkron tetap jalan memakai
+`sku-tampil.json`.
+
+Jangan pernah menaruh keempatnya di berkas mana pun dalam repo ini.
 
 ### Mengatur SKU mana yang tampil
 
-Sunting [`sku-tampil.json`](sku-tampil.json) — bisa langsung dari web GitHub, tanpa buka laptop.
+Lewat **kotak centang di Google Sheets** — tinggal centang dari HP, tanpa menyentuh JSON.
 
-```jsonc
-"MUSKIYA01": { "tampil": true, "kategori": "Abaya", "nama_tampil": "" }
-```
+Kolomnya: `SKU` · `Nama di WMS` · **`Tampil`** (centang) · `Kategori` · `Nama Tampil` ·
+`Varian` · `Ditemukan`. Hanya tiga kolom tengah yang Anda isi; sisanya ditulis sinkron.
 
-- `tampil: false` → SKU tidak pernah terkirim ke browser sama sekali
-- `nama_tampil` kosong → pakai nama dari WMS. Diisi untuk merapikan judul marketplace yang panjang
-- **SKU baru di WMS tidak otomatis muncul** — harus didaftarkan dulu di sini. Sengaja:
-  dengan daftar-larangan, tiap produk baru akan bocor ke publik sebelum sempat ditinjau.
-  Workflow mencetak daftar SKU baru yang belum terdaftar di log Actions.
+- **Daftarnya mengisi dirinya sendiri.** Tiap sinkron, semua SKU dari WMS dikirim ke Sheet.
+  Yang belum ada masuk sebagai baris baru dengan **centang kosong** — produk baru di gudang
+  tidak pernah tampil ke publik sebelum Anda meninjaunya.
+- **Sinkron tidak pernah menimpa centang Anda.** Baris yang sudah ada tidak disentuh sama sekali.
+- `Nama Tampil` kosong → pakai nama dari WMS. Diisi untuk merapikan judul marketplace yang panjang.
+- Menu **Warehouse Hub** di spreadsheet punya pintasan *Centang semua* / *Hapus semua centang*.
+
+Perubahan centang baru terlihat di situs setelah sinkron berikutnya (≤20 menit), atau
+langsung lewat **Actions → Sinkron stok dari WMS → Run workflow**.
+
+#### Memasang backend Sheets
+
+1. Buka spreadsheet → **Extensions → Apps Script**
+2. Hapus kode contoh, tempel seluruh isi [`apps-script/Code.gs`](apps-script/Code.gs)
+3. Ganti `var KODE_AKSES = 'ganti-kode-ini';` dengan kata sandi bebas
+4. **Deploy → New deployment → Web app** — *Execute as* `Me`, *Who has access* `Anyone`
+5. Salin URL yang berakhiran `/exec`, lalu tambahkan dua secret di GitHub:
+   `HUB_API_URL` (URL tadi) dan `HUB_TOKEN` (kata sandi tadi)
+
+Sheet bernama `sku` dibuat otomatis pada sinkron pertama.
+
+#### Kalau Sheets bermasalah
+
+Sinkron tidak ikut mati. Bila Apps Script tak bisa dihubungi atau tokennya salah, skrip
+mencetak peringatan lalu memakai [`sku-tampil.json`](sku-tampil.json) — salinan centang
+terakhir yang di-commit otomatis tiap sinkron berhasil. Berkas itu juga menjadi riwayat
+perubahan centang di git.
 
 Ambang status juga diatur di berkas yang sama:
 
@@ -107,7 +135,8 @@ raksasa padahal fisiknya tinggal beberapa potong — tanpa ambang ini ia terbaca
 |---|---|
 | `index.html` | Seluruh aplikasi — tampilan, penyaringan, paginasi, matriks |
 | `config.js` | Dua baris: lokasi data + URL Apps Script (kosong = mode pratinjau) |
-| `sku-tampil.json` | Daftar-izin SKU + kategori + ambang status. Berkas yang Anda sunting |
+| `sku-tampil.json` | Ambang status + salinan centang terakhir dari Sheets (cadangan) |
+| `apps-script/Code.gs` | Backend Google Sheets — daftar centang SKU |
 | `scripts/sinkron.py` | Penarik stok dari WMS. Pustaka standar saja |
 | `.github/workflows/sinkron-stok.yml` | Penjadwal sinkron tiap 20 menit |
 | `data/katalog.json` | Katalog stok — ditulis otomatis, jangan disunting tangan |

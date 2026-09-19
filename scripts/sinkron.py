@@ -11,8 +11,14 @@ Aturan yang tidak boleh dilanggar (lihat README):
   2. Penyaringan SKU terjadi DI SINI, bukan di browser. SKU yang tidak
      didaftarkan di sku-tampil.json tidak pernah terkirim ke mana pun.
 
+Daftar SKU yang boleh tampil diambil dari Google Sheets (kotak centang) bila
+HUB_API_URL diset. Sheet-nya diisi sendiri oleh skrip ini: SKU baru dari WMS
+masuk sebagai baris baru dengan centang KOSONG, lalu tinggal dicentang manual.
+Hasilnya disalin balik ke sku-tampil.json — sebagai cadangan bila Apps Script
+sedang tidak bisa dihubungi, sekaligus supaya perubahan centang punya riwayat di git.
+
 Kredensial dibaca dari environment (GitHub Actions secret), tidak pernah dari berkas:
-  PORTAL_USER, PORTAL_PASS, dan opsional PORTAL_BASE.
+  PORTAL_USER, PORTAL_PASS, HUB_API_URL, HUB_TOKEN, dan opsional PORTAL_BASE.
 
 Hanya pustaka standar — tidak ada dependensi untuk dipasang.
 """
@@ -32,6 +38,54 @@ BERKAS_KELUAR = AKAR / "data" / "katalog.json"
 
 BASE = os.environ.get("PORTAL_BASE", "https://portal.nawinow.com").rstrip("/")
 WAKTU_HABIS = 60
+
+
+def ambil_daftar_dari_sheet(produk: list[dict]) -> tuple[dict, list[str]] | None:
+    """
+    Kirim seluruh SKU yang ada di WMS ke Apps Script, terima kembali daftar
+    centangnya. SKU yang belum ada di Sheet ditambahkan di sana dengan centang
+    kosong — jadi produk baru tidak pernah tampil sebelum ditinjau.
+
+    Mengembalikan None bila Sheet belum disetel atau tidak bisa dihubungi;
+    pemanggil lalu memakai sku-tampil.json sebagai cadangan.
+    """
+    url = os.environ.get("HUB_API_URL")
+    if not url:
+        return None
+
+    ringkas: dict[str, dict] = {}
+    for it in produk:
+        sku = it.get("sku")
+        if not sku:
+            continue
+        if sku not in ringkas:
+            ringkas[sku] = {"sku": sku, "nama": it.get("nama") or sku, "varian": 0}
+        ringkas[sku]["varian"] += 1
+
+    muatan = json.dumps({
+        "kode": os.environ.get("HUB_TOKEN", ""),
+        "aksi": "sinkron-sku",
+        "produk": list(ringkas.values()),
+    }).encode()
+
+    req = urllib.request.Request(url, data=muatan, method="POST")
+    req.add_header("Content-Type", "application/json")
+    try:
+        with urllib.request.urlopen(req, timeout=WAKTU_HABIS) as r:
+            hasil = json.loads(r.read().decode())
+    except Exception as e:  # noqa: BLE001 — apa pun sebabnya, cadangan harus jalan
+        print(f"! Sheet tidak bisa dihubungi ({e}). Memakai sku-tampil.json.")
+        return None
+
+    if not hasil.get("ok"):
+        galat = hasil.get("error")
+        if galat == "KODE_SALAH":
+            print("! HUB_TOKEN tidak cocok dengan KODE_AKSES di Apps Script.")
+        else:
+            print(f"! Sheet menolak permintaan: {galat}")
+        return None
+
+    return hasil.get("sku") or {}, hasil.get("baru") or []
 
 
 def minta(url: str, data: dict | None = None, token: str | None = None) -> dict:
@@ -97,7 +151,6 @@ def main() -> int:
     config = json.loads(BERKAS_CONFIG.read_text(encoding="utf-8"))
     ambang = config.get("ambang", {})
     periode = int(config.get("periode_hari", 30))
-    daftar = config.get("sku", {})
 
     token = masuk()
     laporan = minta(
@@ -105,6 +158,22 @@ def main() -> int:
         token=token,
     )
     semua = laporan.get("items", [])
+
+    # Sheet adalah sumber kebenaran daftar centang bila tersedia; berkas hanya cadangan.
+    dari_sheet = ambil_daftar_dari_sheet(semua)
+    if dari_sheet is not None:
+        daftar, sku_baru = dari_sheet
+        config["sku"] = daftar
+        BERKAS_CONFIG.write_text(
+            json.dumps(config, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
+        sumber_daftar = "Google Sheets"
+        if sku_baru:
+            print(f"+ {len(sku_baru)} SKU baru ditambahkan ke Sheet (belum dicentang): "
+                  f"{', '.join(sku_baru)}")
+    else:
+        daftar = config.get("sku", {})
+        sumber_daftar = "sku-tampil.json"
 
     keluar, terpakai = [], set()
     for it in semua:
@@ -141,17 +210,18 @@ def main() -> int:
 
     diminta = {s for s, a in daftar.items() if a.get("tampil")}
     hilang = sorted(diminta - terpakai)
-    baru = sorted({it.get("sku") for it in semua} - set(daftar))
+    belum = sorted(s for s in {it.get("sku") for it in semua} if s not in diminta)
 
-    print(f"WMS  : {len(semua)} baris produk")
+    print(f"WMS   : {len(semua)} baris produk")
+    print(f"Daftar: {sumber_daftar} — {len(diminta)} SKU dicentang dari {len(daftar)}")
     print(f"Tampil: {len(keluar)} baris dari {len(terpakai)} SKU")
     n = sum(1 for i in keluar if i["status"] == "aman")
     print(f"Status: aman {n}, menipis {sum(1 for i in keluar if i['status']=='menipis')}, "
           f"habis {sum(1 for i in keluar if i['status']=='habis')}")
     if hilang:
-        print(f"! Didaftarkan tapi tidak ada di WMS: {', '.join(hilang)}")
-    if baru:
-        print(f"! SKU baru di WMS, belum didaftarkan (disembunyikan): {', '.join(baru)}")
+        print(f"! Dicentang tapi tidak ada di WMS: {', '.join(hilang)}")
+    if belum:
+        print(f"! Tidak dicentang, disembunyikan ({len(belum)}): {', '.join(belum)}")
     return 0
 
 
