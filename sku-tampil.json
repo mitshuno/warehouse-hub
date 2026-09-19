@@ -12,12 +12,12 @@
  },
  "sku": {
   "AMR01": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "AMR05": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
@@ -62,327 +62,327 @@
    "nama_tampil": "Daster Wanita Aurelie Dewasa Lengan"
   },
   "KHBN01": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": "Khiban French Khimar Bandana Syar'i"
   },
   "KHBN02": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": "Khiban French Khimar Bandana Syar'i"
   },
   "KHBN03": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": "Khiban French Khimar Bandana Syar'i"
   },
   "KHBN04": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": "Khiban French Khimar Bandana Syar'i"
   },
   "KHBN05": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": "Khiban French Khimar Bandana Syar'i"
   },
   "KHBN06": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": "Khiban French Khimar Bandana Syar'i"
   },
   "KHBN07": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": "Khiban French Khimar Bandana Syar'i"
   },
   "KHBN08": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": "Khiban French Khimar Bandana Syar'i"
   },
   "KHBN09": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": "Khiban French Khimar Bandana Syar'i"
   },
   "KHBN10": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": "Khiban French Khimar Bandana Syar'i"
   },
   "LATIFA02": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "LATIFA08": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "LATIFA10": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "LAYEELA01": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": "Layeela Abaya 2in1 Outer"
   },
   "LAYEELA02": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": "Layeela Abaya 2in1 Outer"
   },
   "LAYEELA03": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": "Layeela Abaya 2in1 Outer"
   },
   "LAYEELA04": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": "Layeela Abaya 2in1 Outer"
   },
   "LAYEELA05": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": "Layeela Abaya 2in1 Outer"
   },
   "MKN01": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN02": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN03": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN04": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN05": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN06": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN07": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN08": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN09": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN10": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN11": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN12": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN13": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MKN14": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Mukena",
    "nama_tampil": ""
   },
   "MUSKIYA01": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "MUSKIYA02": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "MUSKIYA03": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "MUSKIYA04": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "MUSKIYA05": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "MUSKIYA06": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "MUSKIYA07": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "MUSKIYA08": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "MUSKIYA09": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "MUSKIYA10": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "MUSKIYA11": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "MUSKIYA12": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "MUSKIYA13": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "NAYRA01": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "NAYRA02": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "NAYRA03": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "NAYRA04": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "NAYRA05": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "NAYRA06": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "NAYRA07": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "NAYRA08": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "PSM01": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "PSM02": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "PSM03": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "PSM04": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "PSM05": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "PSM06": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "PSM07": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "PSM08": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "PSM09": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "PSM10": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "PSM11": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "PSM12": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
@@ -407,52 +407,52 @@
    "nama_tampil": ""
   },
   "SRY05": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
   },
   "YMN01": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "YMN02": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "ZFR01": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "ZFR02": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "ZFR03": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "ZFR04": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "ZFR05": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "ZFR06": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   },
   "ZFR07": {
-   "tampil": true,
+   "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
   }
