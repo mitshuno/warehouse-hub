@@ -37,6 +37,19 @@
 var SHEET_SKU      = 'sku';
 var SHEET_RESELLER = 'reseller';
 var SHEET_STOK     = 'stok';
+var SHEET_TOKO     = 'stok_toko';
+
+/**
+ * Parameter rekomendasi stok aman. Ubah di sini bila kenyataannya bergeser.
+ *
+ * LEAD_HARI     — lama dari reseller memesan sampai barang tiba di tokonya.
+ * CADANGAN_HARI — bantalan di atas itu, supaya tidak pas-pasan saat penjualan
+ *                 sedang ramai atau pengiriman telat.
+ *
+ * Stok aman = laju jual harian × (LEAD_HARI + CADANGAN_HARI).
+ */
+var LEAD_HARI = 3;
+var CADANGAN_HARI = 7;
 
 /**
  * Kata sandi untuk GitHub Actions. Harus sama dengan secret HUB_TOKEN.
@@ -47,6 +60,7 @@ var KODE_AKSES = 'ganti-kode-ini';
 var KOLOM_SKU = ['SKU', 'Nama di WMS', 'Tampil', 'Kategori', 'Nama Tampil', 'Varian', 'Ditemukan'];
 var KOLOM_RESELLER = ['Nama', 'Kode', 'Aktif', 'Catatan', 'Terakhir masuk'];
 var KOLOM_STOK = ['SKU', 'Varian', 'Ukuran', 'Stok', 'Diperbarui'];
+var KOLOM_TOKO = ['Reseller', 'SKU', 'Varian', 'Ukuran', 'Stok toko', 'Waktu'];
 
 var KATEGORI = ['Abaya', 'Hijab', 'Mukena', 'Daster', 'Set', 'Inner', 'Lainnya'];
 
@@ -75,10 +89,13 @@ function doPost(e) {
   try {
     var req = JSON.parse((e && e.postData && e.postData.contents) || '{}');
 
-    // "masuk" dipanggil dari browser reseller, gerbangnya kode reseller —
+    // Dua aksi ini dipanggil dari browser reseller, gerbangnya kode reseller —
     // bukan KODE_AKSES. Karena itu diperiksa sebelum penjagaan admin di bawah.
     if (req.aksi === 'masuk') {
       return masukReseller_(req);
+    }
+    if (req.aksi === 'simpan-stok-toko') {
+      return simpanTokoReseller_(req);
     }
 
     if (!cocok_(req.kode)) {
@@ -137,6 +154,7 @@ function sheet_(nama, kolom) {
 function sheetSku_()      { return sheet_(SHEET_SKU, KOLOM_SKU); }
 function sheetReseller_() { return sheet_(SHEET_RESELLER, KOLOM_RESELLER); }
 function sheetStok_()     { return sheet_(SHEET_STOK, KOLOM_STOK); }
+function sheetToko_()     { return sheet_(SHEET_TOKO, KOLOM_TOKO); }
 
 function kunci_(sku, varian, size) {
   return String(sku) + '||' + String(varian || '') + '||' + String(size || '');
@@ -300,16 +318,86 @@ function bacaStok_() {
 
 
 /* ------------------------------------------------------------------ */
+/* Sheet "stok_toko" — catatan stok di toko reseller                   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Setiap penyimpanan adalah satu baris baru, bukan menimpa baris lama.
+ * Riwayat inilah yang membuat laju jual bisa dihitung tanpa meminta reseller
+ * mencatat penjualan — cukup "berapa sisa di toko sekarang".
+ */
+function simpanStokToko_(nama, isi) {
+  if (!isi.length) return 0;
+  var sh = sheetToko_();
+  var sekarang = new Date();
+  var baris = isi.map(function (b) {
+    return [nama, String(b.sku || ''), String(b.varian || ''), String(b.size || ''),
+            Number(b.stok) || 0, sekarang];
+  });
+  sh.getRange(sh.getLastRow() + 1, 1, baris.length, KOLOM_TOKO.length).setValues(baris);
+  return baris.length;
+}
+
+/**
+ * Hitung stok terakhir dan laju jual harian per produk untuk satu reseller.
+ *
+ * Laju dihitung dari selang waktu yang stoknya TURUN saja. Selang yang stoknya
+ * naik berarti reseller baru merestok; berapa yang terjual di selang itu tidak
+ * bisa diketahui dari satu angka, jadi selang tersebut dilewati — lebih baik
+ * tidak menghitung daripada menghitung salah.
+ */
+function analisisToko_(nama) {
+  var sh = sheetToko_();
+  var n = sh.getLastRow();
+  if (n < 2) return {};
+
+  var per = {};
+  sh.getRange(2, 1, n - 1, KOLOM_TOKO.length).getValues().forEach(function (r) {
+    if (String(r[0] || '').trim() !== nama) return;
+    var sku = String(r[1] || '').trim();
+    if (!sku) return;
+    var waktu = r[5] instanceof Date ? r[5].getTime() : new Date(r[5]).getTime();
+    if (!waktu) return;
+    var k = kunci_(sku, r[2], r[3]);
+    if (!per[k]) per[k] = [];
+    per[k].push({ stok: Number(r[4]) || 0, waktu: waktu });
+  });
+
+  var out = {};
+  Object.keys(per).forEach(function (k) {
+    var d = per[k].sort(function (a, b) { return a.waktu - b.waktu; });
+    var turun = 0, hari = 0;
+    for (var i = 1; i < d.length; i++) {
+      var selisih = d[i - 1].stok - d[i].stok;
+      var jarak = (d[i].waktu - d[i - 1].waktu) / 86400000;
+      // Jarak sangat pendek dibuang: itu biasanya koreksi salah ketik,
+      // bukan penjualan sungguhan, dan bisa meledakkan laju harian.
+      if (selisih > 0 && jarak >= 0.25) { turun += selisih; hari += jarak; }
+    }
+    var akhir = d[d.length - 1];
+    out[k] = {
+      stok: akhir.stok,
+      laju: hari > 0 ? Math.round((turun / hari) * 100) / 100 : 0,
+      diperbarui: Utilities.formatDate(new Date(akhir.waktu), 'Asia/Jakarta', 'yyyy-MM-dd HH:mm'),
+      catatan: d.length,
+    };
+  });
+  return out;
+}
+
+
+/* ------------------------------------------------------------------ */
 /* Sheet "reseller" — kode masuk                                       */
 /* ------------------------------------------------------------------ */
 
-function masukReseller_(req) {
-  var kode = String((req && req.kode_reseller) || '').trim();
-  if (!kode) return json_({ ok: false, error: 'KODE_KOSONG' });
+/** Cari baris reseller yang kodenya cocok dan masih aktif. */
+function cariReseller_(kode) {
+  kode = String(kode || '').trim();
+  if (!kode) return { galat: 'KODE_KOSONG' };
 
   var sh = sheetReseller_();
   var n = sh.getLastRow();
-  if (n < 2) return json_({ ok: false, error: 'KODE_RESELLER_SALAH' });
+  if (n < 2) return { galat: 'KODE_RESELLER_SALAH' };
 
   var nilai = sh.getRange(2, 1, n - 1, KOLOM_RESELLER.length).getValues();
   for (var i = 0; i < nilai.length; i++) {
@@ -317,18 +405,46 @@ function masukReseller_(req) {
     // Perbandingan tanpa peduli besar-kecil huruf: kode dibagikan lewat WhatsApp
     // dan sering diketik ulang, bukan disalin.
     if (String(r[R_KODE] || '').trim().toUpperCase() !== kode.toUpperCase()) continue;
-    if (r[R_AKTIF] !== true) return json_({ ok: false, error: 'KODE_NONAKTIF' });
-
-    sh.getRange(i + 2, R_TERAKHIR + 1)
-      .setValue(Utilities.formatDate(new Date(), 'Asia/Jakarta', 'yyyy-MM-dd HH:mm'));
-
-    return json_({
-      ok: true,
-      nama: String(r[R_NAMA] || 'Reseller'),
-      stok: bacaStok_(),
-    });
+    if (r[R_AKTIF] !== true) return { galat: 'KODE_NONAKTIF' };
+    return { baris: i + 2, nama: String(r[R_NAMA] || 'Reseller') };
   }
-  return json_({ ok: false, error: 'KODE_RESELLER_SALAH' });
+  return { galat: 'KODE_RESELLER_SALAH' };
+}
+
+function balasanReseller_(nama) {
+  return {
+    ok: true,
+    nama: nama,
+    stok: bacaStok_(),
+    toko: analisisToko_(nama),
+    parameter: { lead_hari: LEAD_HARI, cadangan_hari: CADANGAN_HARI },
+  };
+}
+
+function masukReseller_(req) {
+  var r = cariReseller_(req && req.kode_reseller);
+  if (r.galat) return json_({ ok: false, error: r.galat });
+
+  sheetReseller_().getRange(r.baris, R_TERAKHIR + 1)
+    .setValue(Utilities.formatDate(new Date(), 'Asia/Jakarta', 'yyyy-MM-dd HH:mm'));
+
+  return json_(balasanReseller_(r.nama));
+}
+
+function simpanTokoReseller_(req) {
+  var r = cariReseller_(req && req.kode_reseller);
+  if (r.galat) return json_({ ok: false, error: r.galat });
+
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(20000);
+    var n = simpanStokToko_(r.nama, (req && req.isi) || []);
+    var balas = balasanReseller_(r.nama);
+    balas.tersimpan = n;
+    return json_(balas);
+  } finally {
+    try { lock.releaseLock(); } catch (abaikan) {}
+  }
 }
 
 function rapikanReseller_(sh) {

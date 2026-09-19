@@ -172,8 +172,9 @@ tbody tr:last-child td{border-bottom:0}
 .eta{font-size:12px;color:var(--teks-redup);white-space:nowrap}
 .sku-hp{display:none}
 
-/* Kolom stok hanya ada setelah reseller masuk. */
-.kol-stok{display:none}
+/* Kolom stok & tab Toko saya hanya ada setelah reseller masuk. */
+.kol-stok,.hanya-masuk{display:none}
+body.masuk .tab-tampil button.hanya-masuk{display:block}
 body.masuk th.kol-stok{display:table-cell}
 body.masuk td.kol-stok{display:table-cell}
 .qty{font-variant-numeric:tabular-nums;font-weight:650;font-size:14.5px}
@@ -260,6 +261,46 @@ table.matriks tbody tr:nth-child(even) th,table.matriks tbody tr:nth-child(even)
 .s-habis{background:var(--habis-bg);color:var(--habis-teks)}
 .s-kosong{color:var(--teks-samar);font-weight:400}
 
+/* ── Toko saya ────────────────────────────────────────────────────────────── */
+.toko-kepala{padding:13px 14px;border-bottom:1px solid var(--border);background:var(--zebra)}
+.toko-kepala b{display:block;font-size:14px;font-weight:620}
+.toko-kepala span{display:block;font-size:12.5px;color:var(--teks-redup);margin-top:2px}
+.isian-stok{
+  width:92px;height:38px;padding:0 10px;text-align:right;
+  background:var(--surface);border:1px solid var(--border-kuat);border-radius:9px;
+  font-variant-numeric:tabular-nums;font-weight:600;
+}
+.isian-stok:focus{border-color:var(--aksen)}
+.isian-stok.berubah{border-color:var(--aksen);background:var(--aksen-lembut)}
+.sisa{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.sisa.genting{color:var(--habis-teks)}
+.sisa.waspada{color:var(--tipis-teks)}
+.samar{color:var(--teks-samar);font-weight:400;font-size:12.5px}
+.saran{
+  display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;border-radius:99px;
+  font-size:12.5px;font-weight:650;white-space:nowrap;border:1px solid;
+  color:var(--tipis-teks);background:var(--tipis-bg);border-color:var(--tipis-garis);
+}
+.saran.cukup{color:var(--aman-teks);background:var(--aman-bg);border-color:var(--aman-garis)}
+/* Batang simpan dipakukan ke bawah layar selagi tampilan Toko saya aktif.
+   `position:sticky` tidak bisa dipakai di sini: .panel punya overflow:hidden
+   (untuk memotong sudut membulat), dan itu mematikan sticky pada anaknya. */
+.simpan-bar{border-top:1px solid var(--border);background:var(--surface)}
+.simpan-bar .isi-bar{
+  display:flex;align-items:center;gap:12px;
+  max-width:1180px;margin:0 auto;padding:12px 14px;
+}
+body.tampil-toko .simpan-bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:25;
+  padding-bottom:env(safe-area-inset-bottom);
+  box-shadow:0 -2px 16px rgba(16,24,32,.12);
+}
+body.tampil-toko main{padding-bottom:76px}
+.simpan-bar #statusSimpan{font-size:13px;color:var(--teks-redup);margin-right:auto}
+.simpan-bar #statusSimpan.ok{color:var(--aman-teks);font-weight:600}
+.simpan-bar #statusSimpan.gagal{color:var(--habis-teks);font-weight:600}
+.simpan-bar button:disabled{opacity:.5;cursor:not-allowed}
+
 /* ── Modal ────────────────────────────────────────────────────────────────── */
 .tirai{position:fixed;inset:0;z-index:50;background:rgba(10,14,18,.55);display:grid;place-items:center;padding:16px}
 .tirai[hidden]{display:none}
@@ -330,6 +371,23 @@ footer.kaki{padding:18px 0 40px;font-size:12.5px;color:var(--teks-samar);text-al
   body.masuk tbody td.kol-stok{
     display:flex;width:100%;border-top:1px solid var(--border);border-bottom:0;
   }
+
+  /* Kartu Toko saya: judul, lalu warna·ukuran, lalu dua pasang berdampingan.
+     Enam baris terpisah membuat satu produk memakan hampir satu layar penuh. */
+  #isiToko td[data-label="Warna · Ukuran"]{width:100%}
+  #isiToko td[data-label="Stok gudang"]{width:50%;order:1;border-right:1px solid var(--border)}
+  #isiToko td[data-label="Sisa hari"]{width:50%;order:2}
+  /* Label dan isian ditumpuk: berdampingan, labelnya menyisakan lebar terlalu
+     sempit untuk kotak angka sehingga angkanya terpotong. */
+  #isiToko td[data-label="Stok toko Anda"]{
+    width:50%;order:3;border-right:1px solid var(--border);border-bottom:0;
+    flex-direction:column;align-items:flex-start;gap:5px;padding-top:10px;
+  }
+  #isiToko td[data-label="Saran pesan"]{
+    width:50%;order:4;border-bottom:0;
+    flex-direction:column;align-items:flex-start;gap:5px;padding-top:10px;
+  }
+  #isiToko .isian-stok{width:100%;max-width:120px;text-align:center}
   /* Mayoritas baris tidak punya PO berjalan — baris "Restock —" kosong hanya
      memakan 44px per kartu, jadi disembunyikan saja di HP. */
   tbody td.tanpa-restock{display:none}
@@ -420,6 +478,7 @@ footer.kaki{padding:18px 0 40px;font-size:12.5px;color:var(--teks-samar);text-al
       <div class="tab-tampil" role="tablist" aria-label="Bentuk tampilan">
         <button role="tab" id="tabTabel" aria-selected="true" type="button">Tabel</button>
         <button role="tab" id="tabMatriks" aria-selected="false" type="button">Matriks</button>
+        <button role="tab" id="tabToko" aria-selected="false" type="button" class="hanya-masuk">Toko saya</button>
       </div>
     </div>
 
@@ -445,18 +504,47 @@ footer.kaki{padding:18px 0 40px;font-size:12.5px;color:var(--teks-samar);text-al
         <b>Tidak ada produk yang cocok</b>
         Coba kata kunci lain atau longgarkan saringannya.
       </div>
-      <div class="paginasi" id="paginasi">
-        <div class="info" id="infoPaginasi"></div>
-        <div class="hal" id="tombolHal"></div>
-        <label class="per-hal">Tampil
-          <select id="perHal">
-            <option>10</option><option selected>25</option><option>50</option><option>100</option>
-          </select>
-        </label>
-      </div>
     </div>
 
     <div id="tampilMatriks" hidden></div>
+
+    <div id="tampilToko" hidden>
+      <div class="toko-kepala">
+        <div>
+          <b>Stok di toko Anda</b>
+          <span id="tokoRingkas">Isi jumlah yang masih ada di toko, lalu simpan.</span>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Produk</th>
+            <th>Warna · Ukuran</th>
+            <th>Stok gudang</th>
+            <th>Stok toko Anda</th>
+            <th>Sisa hari</th>
+            <th>Saran pesan</th>
+          </tr>
+        </thead>
+        <tbody id="isiToko"></tbody>
+      </table>
+      <div class="simpan-bar">
+        <div class="isi-bar">
+          <span id="statusSimpan"></span>
+          <button class="tbl-utama" id="tblSimpanToko" type="button">Simpan stok toko</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="paginasi" id="paginasi">
+      <div class="info" id="infoPaginasi"></div>
+      <div class="hal" id="tombolHal"></div>
+      <label class="per-hal">Tampil
+        <select id="perHal">
+          <option>10</option><option selected>25</option><option>50</option><option>100</option>
+        </select>
+      </label>
+    </div>
   </section>
 
 </main>
@@ -513,6 +601,18 @@ var kolomUrut = "sku", arahUrut = 1, halaman = 1, perHalaman = 25, bentuk = "tab
 /* Sesi reseller. stok = { "sku||varian||size": jumlah }. Null = belum masuk. */
 var sesi = null;
 var KUNCI_KODE = "hub_kode";
+/* Isian stok toko yang belum disimpan, supaya tidak hilang saat pindah halaman. */
+var draftToko = {};
+
+function pasangSesi(h){
+  sesi = {
+    nama: h.nama || "Reseller",
+    stok: h.stok || {},
+    toko: h.toko || {},
+    par: h.parameter || { lead_hari: 3, cadangan_hari: 7 },
+  };
+  draftToko = {};
+}
 
 function ls(k, v) {
   try {
@@ -652,9 +752,30 @@ function urutkan(){
 
 /* ── Gambar ───────────────────────────────────────────────────────────────── */
 function gambar(){
-  if(bentuk === "tabel") gambarTabel();
-  else gambarMatriks();
+  if(bentuk === "matriks") gambarMatriks();
+  else if(bentuk === "toko" && sesi) gambarToko();
+  else gambarTabel();
   hitungRingkas();
+}
+
+/* Potongan halaman dipakai bersama oleh tampilan Tabel dan Toko saya. */
+function halamanSaatIni(){
+  var total = tersaring.length;
+  var maksHal = Math.max(1, Math.ceil(total / perHalaman));
+  if(halaman > maksHal) halaman = maksHal;
+  var mulai = (halaman - 1) * perHalaman;
+  return { total:total, maksHal:maksHal, mulai:mulai,
+           potong: tersaring.slice(mulai, mulai + perHalaman) };
+}
+
+function tulisPaginasi(h){
+  document.getElementById("paginasi").hidden = h.total === 0;
+  var akhir = Math.min(h.mulai + perHalaman, h.total);
+  document.getElementById("infoPaginasi").innerHTML = h.total
+    ? "Menampilkan <b>" + (h.mulai + 1) + "–" + akhir + "</b> dari <b>" +
+      h.total.toLocaleString("id-ID") + "</b> baris"
+    : "";
+  gambarTombolHal(h.maksHal);
 }
 
 function hitungRingkas(){
@@ -694,16 +815,10 @@ function tglPendek(iso){
 }
 
 function gambarTabel(){
-  var total = tersaring.length;
-  var maksHal = Math.max(1, Math.ceil(total / perHalaman));
-  if(halaman > maksHal) halaman = maksHal;
-  var mulai = (halaman - 1) * perHalaman;
-  var potong = tersaring.slice(mulai, mulai + perHalaman);
+  var h = halamanSaatIni();
+  document.getElementById("kosongTabel").hidden = h.total > 0;
 
-  document.getElementById("kosongTabel").hidden = total > 0;
-  document.getElementById("paginasi").hidden = total === 0;
-
-  document.getElementById("isiTabel").innerHTML = potong.map(function(it){
+  document.getElementById("isiTabel").innerHTML = h.potong.map(function(it){
     var adaRestock = !!it.restock;
     var restock = adaRestock
       ? '<span class="eta">± ' + esc(tglPendek(it.restock.eta)) + "</span>"
@@ -722,11 +837,7 @@ function gambarTabel(){
     "</tr>";
   }).join("");
 
-  var akhir = Math.min(mulai + perHalaman, total);
-  document.getElementById("infoPaginasi").innerHTML = total
-    ? "Menampilkan <b>" + (mulai + 1) + "–" + akhir + "</b> dari <b>" + total.toLocaleString("id-ID") + "</b> baris"
-    : "";
-  gambarTombolHal(maksHal);
+  tulisPaginasi(h);
 }
 
 function gambarTombolHal(maks){
@@ -755,6 +866,7 @@ function kelompok(){
 }
 
 function gambarMatriks(){
+  document.getElementById("paginasi").hidden = true;
   var grup = kelompok();
   var wadah = document.getElementById("tampilMatriks");
   if(!grup.length){
@@ -784,6 +896,119 @@ function gambarMatriks(){
     "</div>";
   }).join("");
 }
+
+/* ── Toko saya ────────────────────────────────────────────────────────────── */
+function gambarToko(){
+  var h = halamanSaatIni();
+  var tutup = sesi.par.lead_hari + sesi.par.cadangan_hari;  // hari yang harus tertutupi
+  var perluPesan = 0, belumLengkap = 0;
+
+  document.getElementById("isiToko").innerHTML = h.potong.map(function(it){
+    var k = kunciStok(it);
+    var info = sesi.toko[k] || null;
+    var nilai = draftToko[k] !== undefined ? draftToko[k] : (info ? String(info.stok) : "");
+    var stok = nilai === "" ? null : Number(nilai);
+    var laju = info ? info.laju : 0;
+    // Butuh minimal dua kali pengisian: laju jual lahir dari selisih antar isian,
+    // jadi satu titik data saja belum bisa menghasilkan apa pun.
+    var siap = !!info && info.catatan >= 2 && laju > 0;
+
+    var sisaHtml, saranHtml;
+    if(siap && stok !== null){
+      var hari = Math.floor(stok / laju);
+      var kelas = hari <= 3 ? "sisa genting" : hari <= 7 ? "sisa waspada" : "sisa";
+      sisaHtml = '<span class="' + kelas + '">±' + hari + " hari</span>";
+      var pesan = Math.max(0, Math.ceil(laju * tutup) - stok);
+      if(pesan > 0) perluPesan++;
+      saranHtml = pesan > 0
+        ? '<span class="saran">' + pesan.toLocaleString("id-ID") + " pcs</span>"
+        : '<span class="saran cukup">cukup</span>';
+    } else {
+      belumLengkap++;
+      var alasan = !info ? "belum diisi" : "perlu 2 kali isi";
+      sisaHtml = '<span class="samar">' + alasan + "</span>";
+      saranHtml = '<span class="samar">—</span>';
+    }
+
+    return '<tr>' +
+      '<td class="utama sel-nama" data-label="Produk"><span class="judul" title="' + esc(it.nama) + '">' +
+        esc(it.nama) + '</span><span class="sub">' + esc(it.sku) + "</span></td>" +
+      '<td data-label="Warna · Ukuran">' + esc(it.varian) + " · " + esc(it.size) + "</td>" +
+      '<td data-label="Stok gudang">' + selQty(it) + "</td>" +
+      '<td data-label="Stok toko Anda"><input class="isian-stok' +
+        (draftToko[k] !== undefined ? " berubah" : "") + '" type="number" min="0" step="1" ' +
+        'inputmode="numeric" aria-label="Stok toko untuk ' + esc(it.nama) + " " + esc(it.varian) +
+        '" data-kunci="' + esc(k) + '" value="' + esc(nilai) + '"></td>' +
+      '<td data-label="Sisa hari">' + sisaHtml + "</td>" +
+      '<td data-label="Saran pesan">' + saranHtml + "</td>" +
+    "</tr>";
+  }).join("");
+
+  var ringkas = document.getElementById("tokoRingkas");
+  if(!h.total){
+    ringkas.textContent = "Tidak ada produk yang cocok dengan saringan Anda.";
+  } else if(perluPesan){
+    ringkas.textContent = perluPesan + " dari " + h.potong.length +
+      " baris di halaman ini sebaiknya dipesan sekarang.";
+  } else if(belumLengkap === h.potong.length){
+    ringkas.textContent = "Isi jumlah yang masih ada di toko, lalu simpan. " +
+      "Saran pesan muncul setelah pengisian kedua.";
+  } else {
+    ringkas.textContent = "Stok toko Anda aman untuk semua baris di halaman ini.";
+  }
+
+  tulisPaginasi(h);
+}
+
+function statusSimpan(teks, kelas){
+  var el = document.getElementById("statusSimpan");
+  el.textContent = teks;
+  el.className = kelas || "";
+}
+
+function simpanToko(){
+  var kode = ls(KUNCI_KODE);
+  if(!kode){ statusSimpan("Sesi Anda berakhir. Masuk lagi ya.", "gagal"); return; }
+
+  var isi = [];
+  Object.keys(draftToko).forEach(function(k){
+    var v = draftToko[k];
+    if(v === "" || isNaN(Number(v)) || Number(v) < 0) return;
+    var bagian = k.split("||");
+    isi.push({ sku:bagian[0], varian:bagian[1], size:bagian[2], stok:Number(v) });
+  });
+
+  if(!isi.length){ statusSimpan("Belum ada isian baru untuk disimpan."); return; }
+
+  var tombol = document.getElementById("tblSimpanToko");
+  tombol.disabled = true;
+  statusSimpan("Menyimpan…");
+
+  apiPost({ aksi:"simpan-stok-toko", kode_reseller:kode, isi:isi })
+    .then(function(hasil){
+      tombol.disabled = false;
+      if(hasil && hasil.ok){
+        pasangSesi(hasil);          // ini juga mengosongkan draft
+        gambar();
+        statusSimpan(isi.length + " baris tersimpan.", "ok");
+        return;
+      }
+      statusSimpan(PESAN_GALAT[hasil && hasil.error] || "Gagal menyimpan. Coba lagi.", "gagal");
+    })
+    .catch(function(){
+      tombol.disabled = false;
+      statusSimpan("Tidak bisa menghubungi layanan. Isian Anda belum hilang.", "gagal");
+    });
+}
+
+document.getElementById("isiToko").addEventListener("input", function(e){
+  var el = e.target.closest(".isian-stok");
+  if(!el) return;
+  draftToko[el.dataset.kunci] = el.value;
+  el.classList.add("berubah");
+  statusSimpan("Ada isian yang belum disimpan.");
+});
+document.getElementById("tblSimpanToko").addEventListener("click", simpanToko);
 
 /* ── Modal detail ─────────────────────────────────────────────────────────── */
 var pemicuTerakhir = null;
@@ -909,17 +1134,27 @@ document.addEventListener("keydown", function(e){
   if(e.key === "Escape" && !document.getElementById("tirai").hidden) tutup();
 });
 
+var TAMPILAN = [
+  { nama:"tabel",   tab:"tabTabel",   wadah:"tampilTabel"   },
+  { nama:"matriks", tab:"tabMatriks", wadah:"tampilMatriks" },
+  { nama:"toko",    tab:"tabToko",    wadah:"tampilToko"    },
+];
+
 function gantiBentuk(baru){
+  // Tampilan Toko saya hanya ada untuk reseller yang sudah masuk.
+  if(baru === "toko" && !sesi) baru = "tabel";
   bentuk = baru;
-  var t = baru === "tabel";
-  document.getElementById("tabTabel").setAttribute("aria-selected", String(t));
-  document.getElementById("tabMatriks").setAttribute("aria-selected", String(!t));
-  document.getElementById("tampilTabel").hidden = !t;
-  document.getElementById("tampilMatriks").hidden = t;
+  TAMPILAN.forEach(function(v){
+    var aktif = v.nama === baru;
+    document.getElementById(v.tab).setAttribute("aria-selected", String(aktif));
+    document.getElementById(v.wadah).hidden = !aktif;
+  });
+  document.body.classList.toggle("tampil-toko", baru === "toko");
   gambar();
 }
-document.getElementById("tabTabel").addEventListener("click", function(){ gantiBentuk("tabel"); });
-document.getElementById("tabMatriks").addEventListener("click", function(){ gantiBentuk("matriks"); });
+TAMPILAN.forEach(function(v){
+  document.getElementById(v.tab).addEventListener("click", function(){ gantiBentuk(v.nama); });
+});
 
 /* ── Sesi reseller ────────────────────────────────────────────────────────── */
 var PESAN_GALAT = {
@@ -938,6 +1173,7 @@ function terapkanSesi(){
   document.getElementById("catatanKaki").textContent = masuk
     ? "Angka yang tampil adalah stok gudang, bukan stok toko Anda."
     : "Angka stok pasti hanya tampil setelah masuk sebagai reseller.";
+  if(!masuk && bentuk === "toko"){ gantiBentuk("tabel"); return; }
   gambar();
 }
 
@@ -1002,7 +1238,7 @@ function kirimKode(){
   apiPost({ aksi: "masuk", kode_reseller: kode })
     .then(function(h){
       if(h && h.ok){
-        sesi = { nama: h.nama || "Reseller", stok: h.stok || {} };
+        pasangSesi(h);
         ls(KUNCI_KODE, kode);
         tutup();
         terapkanSesi();
@@ -1023,7 +1259,7 @@ function cobaMasukOtomatis(){
   apiPost({ aksi: "masuk", kode_reseller: kode })
     .then(function(h){
       if(h && h.ok){
-        sesi = { nama: h.nama || "Reseller", stok: h.stok || {} };
+        pasangSesi(h);
         terapkanSesi();
       } else if(h && (h.error === "KODE_RESELLER_SALAH" || h.error === "KODE_NONAKTIF")){
         // Kode sudah dicabut admin — buang supaya tidak dicoba terus tiap buka.

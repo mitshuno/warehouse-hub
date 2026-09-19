@@ -14,7 +14,7 @@ Sumber stok adalah WMS di [portal.nawinow.com](https://portal.nawinow.com/). Hub
 | **1b** | Sinkron GitHub Actions dari WMS + whitelist SKU | ✅ selesai — tinggal pasang secret |
 | **1c** | Daftar centang SKU di Google Sheets | ✅ selesai — tinggal deploy |
 | **1d** | Login reseller + angka stok pasti | ✅ selesai |
-| **1e** | Stok toko reseller + rekomendasi stok aman | belum |
+| **1e** | Stok toko reseller + rekomendasi stok aman | ✅ selesai |
 | **2** | Watchlist, alert restock, draft pesanan, PWA, tren stok | belum |
 
 ## Menjalankan secara lokal
@@ -61,6 +61,37 @@ Catatan tentang kode:
 - Tidak peduli huruf besar-kecil, karena kode sering diketik ulang, bukan disalin.
 - Tersimpan di peramban reseller, jadi cukup diketik sekali sampai mereka menekan keluar.
 - Kode yang dicabut otomatis terbuang dari peramban saat mereka membuka halaman lagi.
+
+## Toko saya — rekomendasi stok aman
+
+Tab **Toko saya** muncul setelah reseller masuk. Isinya satu baris per varian:
+stok gudang, kotak isian stok toko, sisa hari, dan saran jumlah pesan.
+
+Reseller cukup mengisi **satu angka**: berapa yang masih ada di tokonya. Laju jualnya
+dihitung sendiri dari selisih antar pengisian — tidak ada pencatatan penjualan harian.
+
+```
+laju harian  = total penurunan ÷ total hari
+sisa hari    = stok toko ÷ laju harian
+stok aman    = laju harian × (LEAD_HARI + CADANGAN_HARI)
+saran pesan  = stok aman − stok toko
+```
+
+`LEAD_HARI` (3) dan `CADANGAN_HARI` (7) ada di baris paling atas
+[`apps-script/Code.gs`](apps-script/Code.gs) — ubah di sana bila waktu kirim bergeser.
+
+Tiga hal yang sengaja dibuat begitu:
+
+- **Butuh dua kali pengisian.** Laju lahir dari selisih, jadi satu titik data belum
+  menghasilkan apa pun. Sampai itu terjadi, barisnya menulis "perlu 2 kali isi".
+- **Selang yang stoknya naik dilewati.** Itu berarti reseller baru merestok, dan berapa
+  yang terjual di selang itu tidak bisa diketahui dari satu angka. Lebih baik tidak
+  menghitung daripada menghitung salah.
+- **Selang di bawah 6 jam dibuang.** Biasanya itu koreksi salah ketik, bukan penjualan,
+  dan bisa meledakkan laju harian.
+
+Setiap penyimpanan menambah baris baru di sheet `stok_toko`, tidak menimpa. Riwayat itulah
+yang membuat perhitungannya mungkin — jangan menghapus baris lama kecuali memang perlu.
 
 ## Keamanan tampilan
 
