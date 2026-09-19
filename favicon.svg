@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Warehouse Hub">
+  <!-- Kotak kardus di atas bidang teal. Celah antara tutup dan badan serta lubang
+       pegangannya sengaja dilebihkan: pada 16px di bilah tab, satu satuan viewBox
+       menyusut jadi seperempat piksel, jadi detail yang "pas" di ukuran besar
+       akan lenyap sama sekali. -->
+  <rect width="64" height="64" rx="15" fill="#0f766e"/>
+  <rect x="9"  y="14" width="46" height="12" rx="2.5" fill="#ffffff"/>
+  <rect x="13" y="30" width="38" height="21" rx="3"   fill="#ffffff"/>
+  <rect x="25" y="35" width="14" height="6"  rx="3"   fill="#0f766e"/>
+</svg>

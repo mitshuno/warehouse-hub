@@ -6,6 +6,15 @@
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="Etalase stok gudang untuk reseller — cek ketersediaan SKU sebelum menjual.">
 <title>Warehouse Hub — Stok Reseller</title>
+
+<!-- SVG untuk peramban modern, PNG 32px sebagai cadangan untuk yang belum
+     mendukungnya (Safari lama, sebagian peramban bawaan Android). -->
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0f766e" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1216" media="(prefers-color-scheme: dark)">
 <style>
 /* ── Token warna ──────────────────────────────────────────────────────────── */
 :root{
@@ -67,10 +76,7 @@ header.atas{
 }
 .atas-isi{display:flex; align-items:center; gap:12px; height:60px}
 .merek{display:flex; align-items:center; gap:10px; margin-right:auto; min-width:0}
-.merek .ikon{
-  width:32px;height:32px;flex:none;border-radius:9px;background:var(--aksen);
-  color:var(--aksen-teks);display:grid;place-items:center;font-weight:700;font-size:15px;
-}
+.merek .ikon{width:32px;height:32px;flex:none;border-radius:9px;display:block}
 .merek b{font-size:15px; font-weight:650; letter-spacing:-.01em; white-space:nowrap}
 .merek span{display:block;font-size:11.5px;color:var(--teks-samar);font-weight:400;line-height:1.2}
 .tbl-ikon{
@@ -424,7 +430,7 @@ footer.kaki{padding:18px 0 40px;font-size:12.5px;color:var(--teks-samar);text-al
 <header class="atas">
   <div class="wadah atas-isi">
     <div class="merek">
-      <div class="ikon" aria-hidden="true">W</div>
+      <img class="ikon" src="favicon.svg" width="32" height="32" alt="" aria-hidden="true">
       <div>
         <b>Warehouse Hub</b>
         <span>Stok gudang untuk reseller</span>

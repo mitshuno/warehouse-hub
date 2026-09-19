@@ -201,6 +201,11 @@ raksasa padahal fisiknya tinggal beberapa potong — tanpa ambang ini ia terbaca
 | `scripts/sinkron.py` | Penarik stok dari WMS. Pustaka standar saja |
 | `.github/workflows/sinkron-stok.yml` | Penjadwal sinkron tiap 20 menit |
 | `data/katalog.json` | Katalog stok — ditulis otomatis, jangan disunting tangan |
+| `favicon.svg` | Lambang situs — sumber tunggal, PNG di bawah ini diturunkan darinya |
+| `favicon-32.png` | Cadangan untuk peramban yang belum mendukung favicon SVG |
+| `apple-touch-icon.png` | Ikon layar utama iOS. Persegi penuh — iOS memasang maskernya sendiri |
+| `icon-192.png`, `icon-512.png` | Ikon layar utama Android, dirujuk manifest |
+| `site.webmanifest` | Nama, warna, dan ikon saat situs dipasang ke layar utama |
 | `.nojekyll` | Melewati pemrosesan Jekyll di GitHub Pages |
 
 ## Publikasi lewat GitHub Pages
