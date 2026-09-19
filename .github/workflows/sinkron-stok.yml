@@ -64,7 +64,23 @@ jobs:
           git add data/katalog.json sku-tampil.json
           if git diff --staged --quiet; then
             echo "Stok tidak berubah — tidak ada commit."
-          else
-            git commit -m "Sinkron stok $(date -u '+%Y-%m-%d %H:%M UTC')"
-            git push
+            exit 0
           fi
+
+          git commit -m "Sinkron stok $(date -u '+%Y-%m-%d %H:%M UTC')"
+
+          if git push; then
+            exit 0
+          fi
+
+          # Gagal sekali belum tentu soal izin: bisa juga ada commit lain yang
+          # masuk selama sinkron berjalan. Coba satukan dulu, baru menyerah.
+          echo "Push pertama gagal — mencoba menyatukan dengan perubahan terbaru…"
+          if git pull --rebase --autostash && git push; then
+            exit 0
+          fi
+
+          echo "::error::Tidak bisa push ke repo. Yang paling sering: izin Actions."
+          echo "Buka Settings -> Actions -> General -> Workflow permissions,"
+          echo "pilih 'Read and write permissions', lalu jalankan ulang."
+          exit 1
