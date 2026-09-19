@@ -38,6 +38,7 @@ var SHEET_SKU      = 'sku';
 var SHEET_RESELLER = 'reseller';
 var SHEET_STOK     = 'stok';
 var SHEET_TOKO     = 'stok_toko';
+var SHEET_PILIHAN  = 'produk_toko';
 
 /**
  * Parameter rekomendasi stok aman. Ubah di sini bila kenyataannya bergeser.
@@ -61,6 +62,7 @@ var KOLOM_SKU = ['SKU', 'Nama di WMS', 'Tampil', 'Kategori', 'Nama Tampil', 'Var
 var KOLOM_RESELLER = ['Nama', 'Kode', 'Aktif', 'Catatan', 'Terakhir masuk'];
 var KOLOM_STOK = ['SKU', 'Varian', 'Ukuran', 'Stok', 'Diperbarui'];
 var KOLOM_TOKO = ['Reseller', 'SKU', 'Varian', 'Ukuran', 'Stok toko', 'Waktu'];
+var KOLOM_PILIHAN = ['Reseller', 'SKU', 'Varian', 'Ukuran', 'Dijual'];
 
 var KATEGORI = ['Abaya', 'Hijab', 'Mukena', 'Daster', 'Set', 'Inner', 'Lainnya'];
 
@@ -155,6 +157,7 @@ function sheetSku_()      { return sheet_(SHEET_SKU, KOLOM_SKU); }
 function sheetReseller_() { return sheet_(SHEET_RESELLER, KOLOM_RESELLER); }
 function sheetStok_()     { return sheet_(SHEET_STOK, KOLOM_STOK); }
 function sheetToko_()     { return sheet_(SHEET_TOKO, KOLOM_TOKO); }
+function sheetPilihan_()  { return sheet_(SHEET_PILIHAN, KOLOM_PILIHAN); }
 
 function kunci_(sku, varian, size) {
   return String(sku) + '||' + String(varian || '') + '||' + String(size || '');
@@ -387,6 +390,69 @@ function analisisToko_(nama) {
 
 
 /* ------------------------------------------------------------------ */
+/* Sheet "produk_toko" — produk apa saja yang dijual tiap reseller     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Tidak semua reseller menjual semua produk. Tanpa daftar ini, halaman Toko saya
+ * memaksa mereka mengisi puluhan baris yang tidak relevan — dan fitur yang
+ * merepotkan tidak akan dipakai.
+ */
+function bacaPilihan_(nama) {
+  var sh = sheetPilihan_();
+  var n = sh.getLastRow();
+  if (n < 2) return {};
+  var out = {};
+  sh.getRange(2, 1, n - 1, KOLOM_PILIHAN.length).getValues().forEach(function (r) {
+    if (String(r[0] || '').trim() !== nama) return;
+    var sku = String(r[1] || '').trim();
+    if (!sku) return;
+    out[kunci_(sku, r[2], r[3])] = r[4] === true;
+  });
+  return out;
+}
+
+/** Perbarui baris yang sudah ada, tambahkan yang belum. */
+function simpanPilihan_(nama, pilihan) {
+  if (!pilihan || !pilihan.length) return 0;
+  var sh = sheetPilihan_();
+  var n = sh.getLastRow();
+
+  var barisKe = {};
+  if (n >= 2) {
+    sh.getRange(2, 1, n - 1, 4).getValues().forEach(function (r, i) {
+      if (String(r[0] || '').trim() !== nama) return;
+      barisKe[kunci_(String(r[1] || '').trim(), r[2], r[3])] = i + 2;
+    });
+  }
+
+  var tambahan = [], diubah = 0;
+  pilihan.forEach(function (p) {
+    var sku = String(p.sku || '').trim();
+    if (!sku) return;
+    var k = kunci_(sku, p.varian, p.size);
+    var jual = p.jual === true;
+    if (barisKe[k]) {
+      sh.getRange(barisKe[k], 5).setValue(jual);
+    } else {
+      tambahan.push([nama, sku, String(p.varian || ''), String(p.size || ''), jual]);
+    }
+    diubah++;
+  });
+
+  if (tambahan.length) {
+    sh.getRange(sh.getLastRow() + 1, 1, tambahan.length, KOLOM_PILIHAN.length).setValues(tambahan);
+  }
+  var total = sh.getLastRow() - 1;
+  if (total > 0) {
+    sh.getRange(2, 5, total, 1)
+      .setDataValidation(SpreadsheetApp.newDataValidation().requireCheckbox().build())
+      .setHorizontalAlignment('center');
+  }
+  return diubah;
+}
+
+/* ------------------------------------------------------------------ */
 /* Sheet "reseller" — kode masuk                                       */
 /* ------------------------------------------------------------------ */
 
@@ -417,6 +483,7 @@ function balasanReseller_(nama) {
     nama: nama,
     stok: bacaStok_(),
     toko: analisisToko_(nama),
+    pilihan: bacaPilihan_(nama),
     parameter: { lead_hari: LEAD_HARI, cadangan_hari: CADANGAN_HARI },
   };
 }
@@ -439,8 +506,10 @@ function simpanTokoReseller_(req) {
   try {
     lock.waitLock(20000);
     var n = simpanStokToko_(r.nama, (req && req.isi) || []);
+    var m = simpanPilihan_(r.nama, (req && req.pilihan) || []);
     var balas = balasanReseller_(r.nama);
     balas.tersimpan = n;
+    balas.pilihan_tersimpan = m;
     return json_(balas);
   } finally {
     try { lock.releaseLock(); } catch (abaikan) {}

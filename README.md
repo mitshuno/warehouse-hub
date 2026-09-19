@@ -70,6 +70,17 @@ stok gudang, kotak isian stok toko, sisa hari, dan saran jumlah pesan.
 Reseller cukup mengisi **satu angka**: berapa yang masih ada di tokonya. Laju jualnya
 dihitung sendiri dari selisih antar pengisian — tidak ada pencatatan penjualan harian.
 
+### Memilih produk yang dijual
+
+Tidak semua reseller menjual semua produk. Di tab itu ada dua saringan:
+
+- **Yang saya jual** — hanya produk yang dicentang reseller. Ini tampilan sehari-harinya.
+- **Semua produk** — seluruh katalog, untuk mencentang atau melepas centang.
+
+Reseller yang belum memilih apa pun dibuka langsung di "Semua produk", karena memulai di
+saringan kosong hanya menyuguhkan halaman kosong. Pilihannya tersimpan di sheet
+`produk_toko` dan ikut tersimpan bersama tombol yang sama.
+
 ```
 laju harian  = total penurunan ÷ total hari
 sisa hari    = stok toko ÷ laju harian
@@ -90,7 +101,7 @@ Tiga hal yang sengaja dibuat begitu:
 - **Selang di bawah 6 jam dibuang.** Biasanya itu koreksi salah ketik, bukan penjualan,
   dan bisa meledakkan laju harian.
 
-Setiap penyimpanan menambah baris baru di sheet `stok_toko`, tidak menimpa. Riwayat itulah
+Setiap penyimpanan stok menambah baris baru di sheet `stok_toko`, tidak menimpa. Riwayat itulah
 yang membuat perhitungannya mungkin — jangan menghapus baris lama kecuali memang perlu.
 
 ## Keamanan tampilan
@@ -168,7 +179,8 @@ langsung lewat **Actions → Sinkron stok dari WMS → Run workflow**.
 5. Salin URL yang berakhiran `/exec`, lalu tambahkan dua secret di GitHub:
    `HUB_API_URL` (URL tadi) dan `HUB_TOKEN` (kata sandi tadi)
 
-Ketiga sheet (`sku`, `reseller`, `stok`) dibuat otomatis pada sinkron pertama.
+Kelima sheet (`sku`, `reseller`, `stok`, `stok_toko`, `produk_toko`) dibuat otomatis
+saat pertama dibutuhkan.
 
 ⚠️ **Setiap kali `Code.gs` diperbarui, deployment harus dinaikkan versinya** — kalau tidak,
 Apps Script tetap menjalankan kode lama. Caranya: **Deploy → Manage deployments → ikon

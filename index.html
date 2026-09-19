@@ -268,7 +268,18 @@ table.matriks tbody tr:nth-child(even) th,table.matriks tbody tr:nth-child(even)
 .s-kosong{color:var(--teks-samar);font-weight:400}
 
 /* ── Toko saya ────────────────────────────────────────────────────────────── */
-.toko-kepala{padding:13px 14px;border-bottom:1px solid var(--border);background:var(--zebra)}
+.toko-kepala{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:13px 14px;border-bottom:1px solid var(--border);background:var(--zebra);
+}
+.toko-kepala>div:first-child{margin-right:auto;min-width:0}
+.toko-kepala .tab-tampil{background:var(--surface)}
+.toko-kepala .tab-tampil button[aria-selected="true"]{background:var(--aksen);color:var(--aksen-teks)}
+.centang-jual{width:20px;height:20px;accent-color:var(--aksen);cursor:pointer;margin:0}
+/* Baris yang tidak dijual diredupkan — isiannya tetap bisa diakses, hanya
+   diturunkan bobot visualnya supaya mata langsung jatuh ke produk yang relevan. */
+#isiToko tr.tak-dijual td:not(.kol-jual){opacity:.42}
+th.kol-jual,td.kol-jual{width:56px;text-align:center}
 .toko-kepala b{display:block;font-size:14px;font-weight:620}
 .toko-kepala span{display:block;font-size:12.5px;color:var(--teks-redup);margin-top:2px}
 .isian-stok{
@@ -380,6 +391,12 @@ footer.kaki{padding:18px 0 40px;font-size:12.5px;color:var(--teks-samar);text-al
 
   /* Kartu Toko saya: judul, lalu warna·ukuran, lalu dua pasang berdampingan.
      Enam baris terpisah membuat satu produk memakan hampir satu layar penuh. */
+  /* Centang "Jual" naik ke baris judul, di depan nama produk. */
+  #isiToko td.kol-jual{
+    width:auto;flex:none;order:-3;border-bottom:0;
+    padding:11px 0 11px 13px;justify-content:flex-start;
+  }
+  #isiToko td.kol-jual::before{content:none}
   #isiToko td[data-label="Warna · Ukuran"]{width:100%}
   #isiToko td[data-label="Stok gudang"]{width:50%;order:1;border-right:1px solid var(--border)}
   #isiToko td[data-label="Sisa hari"]{width:50%;order:2}
@@ -520,10 +537,15 @@ footer.kaki{padding:18px 0 40px;font-size:12.5px;color:var(--teks-samar);text-al
           <b>Stok di toko Anda</b>
           <span id="tokoRingkas">Isi jumlah yang masih ada di toko, lalu simpan.</span>
         </div>
+        <div class="tab-tampil" role="tablist" aria-label="Saringan produk toko">
+          <button role="tab" id="filJual"  aria-selected="true"  type="button">Yang saya jual</button>
+          <button role="tab" id="filSemua" aria-selected="false" type="button">Semua produk</button>
+        </div>
       </div>
       <table>
         <thead>
           <tr>
+            <th class="kol-jual">Jual</th>
             <th>Produk</th>
             <th>Warna · Ukuran</th>
             <th>Stok gudang</th>
@@ -609,15 +631,37 @@ var sesi = null;
 var KUNCI_KODE = "hub_kode";
 /* Isian stok toko yang belum disimpan, supaya tidak hilang saat pindah halaman. */
 var draftToko = {};
+/* Centang "Jual" yang belum disimpan, dan saringan tampilan Toko saya. */
+var draftPilihan = {};
+var saringToko = "jual";
+
+/* Apakah produk ini dijual reseller — draft yang belum disimpan menang. */
+function dijualOleh(k){
+  if(draftPilihan[k] !== undefined) return draftPilihan[k];
+  return !!(sesi && sesi.pilihan[k]);
+}
 
 function pasangSesi(h){
   sesi = {
     nama: h.nama || "Reseller",
     stok: h.stok || {},
     toko: h.toko || {},
+    pilihan: h.pilihan || {},
     par: h.parameter || { lead_hari: 3, cadangan_hari: 7 },
   };
   draftToko = {};
+  draftPilihan = {};
+  // Reseller baru belum memilih apa pun; memulai di "Yang saya jual" hanya akan
+  // menyuguhkan halaman kosong, jadi dibuka di "Semua produk" agar bisa memilih.
+  saringToko = Object.keys(sesi.pilihan).some(function(k){ return sesi.pilihan[k]; })
+    ? "jual" : "semua";
+  if(document.getElementById("filJual")) pasangSaringToko(saringToko);
+}
+
+function pasangSaringToko(nilai){
+  saringToko = nilai;
+  document.getElementById("filJual").setAttribute("aria-selected", String(nilai === "jual"));
+  document.getElementById("filSemua").setAttribute("aria-selected", String(nilai === "semua"));
 }
 
 function ls(k, v) {
@@ -765,13 +809,14 @@ function gambar(){
 }
 
 /* Potongan halaman dipakai bersama oleh tampilan Tabel dan Toko saya. */
-function halamanSaatIni(){
-  var total = tersaring.length;
+function halamanSaatIni(daftar){
+  daftar = daftar || tersaring;
+  var total = daftar.length;
   var maksHal = Math.max(1, Math.ceil(total / perHalaman));
   if(halaman > maksHal) halaman = maksHal;
   var mulai = (halaman - 1) * perHalaman;
   return { total:total, maksHal:maksHal, mulai:mulai,
-           potong: tersaring.slice(mulai, mulai + perHalaman) };
+           potong: daftar.slice(mulai, mulai + perHalaman) };
 }
 
 function tulisPaginasi(h){
@@ -905,12 +950,19 @@ function gambarMatriks(){
 
 /* ── Toko saya ────────────────────────────────────────────────────────────── */
 function gambarToko(){
-  var h = halamanSaatIni();
+  // Di mode "Yang saya jual", baris yang baru dicentang tetap ikut tampil walau
+  // belum disimpan — kalau langsung hilang, reseller akan mengira centangnya gagal.
+  var daftar = saringToko === "semua"
+    ? tersaring
+    : tersaring.filter(function(it){ return dijualOleh(kunciStok(it)); });
+
+  var h = halamanSaatIni(daftar);
   var tutup = sesi.par.lead_hari + sesi.par.cadangan_hari;  // hari yang harus tertutupi
   var perluPesan = 0, belumLengkap = 0;
 
   document.getElementById("isiToko").innerHTML = h.potong.map(function(it){
     var k = kunciStok(it);
+    var dijual = dijualOleh(k);
     var info = sesi.toko[k] || null;
     var nilai = draftToko[k] !== undefined ? draftToko[k] : (info ? String(info.stok) : "");
     var stok = nilai === "" ? null : Number(nilai);
@@ -936,7 +988,10 @@ function gambarToko(){
       saranHtml = '<span class="samar">—</span>';
     }
 
-    return '<tr>' +
+    return '<tr' + (dijual ? "" : ' class="tak-dijual"') + ">" +
+      '<td class="kol-jual" data-label="Jual"><input type="checkbox" class="centang-jual" ' +
+        'data-kunci="' + esc(k) + '"' + (dijual ? " checked" : "") +
+        ' aria-label="Saya menjual ' + esc(it.nama) + " " + esc(it.varian) + '"></td>' +
       '<td class="utama sel-nama" data-label="Produk"><span class="judul" title="' + esc(it.nama) + '">' +
         esc(it.nama) + '</span><span class="sub">' + esc(it.sku) + "</span></td>" +
       '<td data-label="Warna · Ukuran">' + esc(it.varian) + " · " + esc(it.size) + "</td>" +
@@ -951,7 +1006,10 @@ function gambarToko(){
   }).join("");
 
   var ringkas = document.getElementById("tokoRingkas");
-  if(!h.total){
+  if(!h.total && saringToko === "jual"){
+    ringkas.textContent = "Anda belum menandai produk apa pun. Buka “Semua produk”, " +
+      "centang yang Anda jual, lalu simpan.";
+  } else if(!h.total){
     ringkas.textContent = "Tidak ada produk yang cocok dengan saringan Anda.";
   } else if(perluPesan){
     ringkas.textContent = perluPesan + " dari " + h.potong.length +
@@ -984,19 +1042,30 @@ function simpanToko(){
     isi.push({ sku:bagian[0], varian:bagian[1], size:bagian[2], stok:Number(v) });
   });
 
-  if(!isi.length){ statusSimpan("Belum ada isian baru untuk disimpan."); return; }
+  var pilihan = [];
+  Object.keys(draftPilihan).forEach(function(k){
+    var bagian = k.split("||");
+    pilihan.push({ sku:bagian[0], varian:bagian[1], size:bagian[2], jual:draftPilihan[k] });
+  });
+
+  if(!isi.length && !pilihan.length){
+    statusSimpan("Belum ada perubahan untuk disimpan."); return;
+  }
 
   var tombol = document.getElementById("tblSimpanToko");
   tombol.disabled = true;
   statusSimpan("Menyimpan…");
 
-  apiPost({ aksi:"simpan-stok-toko", kode_reseller:kode, isi:isi })
+  apiPost({ aksi:"simpan-stok-toko", kode_reseller:kode, isi:isi, pilihan:pilihan })
     .then(function(hasil){
       tombol.disabled = false;
       if(hasil && hasil.ok){
-        pasangSesi(hasil);          // ini juga mengosongkan draft
+        var pesan = [];
+        if(isi.length) pesan.push(isi.length + " stok");
+        if(pilihan.length) pesan.push(pilihan.length + " pilihan produk");
+        pasangSesi(hasil);          // ini juga mengosongkan kedua draft
         gambar();
-        statusSimpan(isi.length + " baris tersimpan.", "ok");
+        statusSimpan("Tersimpan: " + pesan.join(" dan ") + ".", "ok");
         return;
       }
       statusSimpan(PESAN_GALAT[hasil && hasil.error] || "Gagal menyimpan. Coba lagi.", "gagal");
@@ -1012,7 +1081,24 @@ document.getElementById("isiToko").addEventListener("input", function(e){
   if(!el) return;
   draftToko[el.dataset.kunci] = el.value;
   el.classList.add("berubah");
-  statusSimpan("Ada isian yang belum disimpan.");
+  statusSimpan("Ada perubahan yang belum disimpan.");
+});
+document.getElementById("isiToko").addEventListener("change", function(e){
+  var el = e.target.closest(".centang-jual");
+  if(!el) return;
+  draftPilihan[el.dataset.kunci] = el.checked;
+  // Sengaja TIDAK menggambar ulang tabel di sini: itu akan mengganti elemen
+  // centangnya sehingga fokus hilang dan centang beruntun bisa meleset. Baris
+  // yang baru diubah memang dibiarkan tetap di tempatnya sampai disimpan.
+  var baris = el.closest("tr");
+  if(baris) baris.classList.toggle("tak-dijual", !el.checked);
+  statusSimpan("Ada perubahan yang belum disimpan.");
+});
+document.getElementById("filJual").addEventListener("click", function(){
+  pasangSaringToko("jual"); halaman = 1; gambarToko();
+});
+document.getElementById("filSemua").addEventListener("click", function(){
+  pasangSaringToko("semua"); halaman = 1; gambarToko();
 });
 document.getElementById("tblSimpanToko").addEventListener("click", simpanToko);
 
