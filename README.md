@@ -13,7 +13,8 @@ Sumber stok adalah WMS di [portal.nawinow.com](https://portal.nawinow.com/). Hub
 | **1a** | Kerangka UI + katalog stok | ✅ selesai |
 | **1b** | Sinkron GitHub Actions dari WMS + whitelist SKU | ✅ selesai — tinggal pasang secret |
 | **1c** | Daftar centang SKU di Google Sheets | ✅ selesai — tinggal deploy |
-| **1d** | Lapisan reseller: login, angka pasti, stok toko | belum |
+| **1d** | Login reseller + angka stok pasti | ✅ selesai |
+| **1e** | Stok toko reseller + rekomendasi stok aman | belum |
 | **2** | Watchlist, alert restock, draft pesanan, PWA, tren stok | belum |
 
 ## Menjalankan secara lokal
@@ -35,6 +36,31 @@ dan `file://` diblokir CORS.
 - Mode terang & gelap: mengikuti setelan sistem, bisa ditimpa manual, tersimpan di browser
 - Di HP tabel berubah jadi kartu padat; matriks tetap tabel dengan gulir mendatar
 - Status ditandai ikon **dan** teks, tidak hanya warna
+
+## Masuk sebagai reseller
+
+Pengunjung biasa hanya melihat status **Aman / Menipis / Habis**. Reseller yang memasukkan
+kodenya melihat **jumlah persis per varian** — di tabel, di matriks, dan di detail SKU.
+
+Angka itu tidak pernah ada di repo. Alurnya:
+
+```
+Actions --(angka stok, hanya SKU yang dicentang)--> sheet "stok" di spreadsheet Anda
+Reseller di HP --(kode)--> Apps Script --(angka)--> HP
+```
+
+### Menambah reseller
+
+Di spreadsheet: menu **Warehouse Hub → Tambah reseller**. Masukkan namanya, kode acak
+dibuatkan otomatis, lalu bagikan kode itu lewat WhatsApp.
+
+Mencabut akses: hapus centang di kolom **Aktif** pada sheet `reseller`. Berlaku seketika —
+reseller itu langsung kembali hanya melihat status.
+
+Catatan tentang kode:
+- Tidak peduli huruf besar-kecil, karena kode sering diketik ulang, bukan disalin.
+- Tersimpan di peramban reseller, jadi cukup diketik sekali sampai mereka menekan keluar.
+- Kode yang dicabut otomatis terbuang dari peramban saat mereka membuka halaman lagi.
 
 ## Keamanan tampilan
 
@@ -111,7 +137,11 @@ langsung lewat **Actions → Sinkron stok dari WMS → Run workflow**.
 5. Salin URL yang berakhiran `/exec`, lalu tambahkan dua secret di GitHub:
    `HUB_API_URL` (URL tadi) dan `HUB_TOKEN` (kata sandi tadi)
 
-Sheet bernama `sku` dibuat otomatis pada sinkron pertama.
+Ketiga sheet (`sku`, `reseller`, `stok`) dibuat otomatis pada sinkron pertama.
+
+⚠️ **Setiap kali `Code.gs` diperbarui, deployment harus dinaikkan versinya** — kalau tidak,
+Apps Script tetap menjalankan kode lama. Caranya: **Deploy → Manage deployments → ikon
+pensil → Version: New version → Deploy**. URL `/exec`-nya tidak berubah.
 
 #### Kalau Sheets bermasalah
 
@@ -134,9 +164,9 @@ raksasa padahal fisiknya tinggal beberapa potong — tanpa ambang ini ia terbaca
 | Berkas | Isi |
 |---|---|
 | `index.html` | Seluruh aplikasi — tampilan, penyaringan, paginasi, matriks |
-| `config.js` | Dua baris: lokasi data + URL Apps Script (kosong = mode pratinjau) |
+| `config.js` | Lokasi data + alamat Apps Script. Ditulis otomatis oleh sinkron |
 | `sku-tampil.json` | Ambang status + salinan centang terakhir dari Sheets (cadangan) |
-| `apps-script/Code.gs` | Backend Google Sheets — daftar centang SKU |
+| `apps-script/Code.gs` | Backend Google Sheets — daftar centang SKU, kode reseller, angka stok |
 | `scripts/sinkron.py` | Penarik stok dari WMS. Pustaka standar saja |
 | `.github/workflows/sinkron-stok.yml` | Penjadwal sinkron tiap 20 menit |
 | `data/katalog.json` | Katalog stok — ditulis otomatis, jangan disunting tangan |

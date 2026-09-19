@@ -35,6 +35,7 @@ from pathlib import Path
 AKAR = Path(__file__).resolve().parent.parent
 BERKAS_CONFIG = AKAR / "sku-tampil.json"
 BERKAS_KELUAR = AKAR / "data" / "katalog.json"
+BERKAS_JS = AKAR / "config.js"
 
 BASE = os.environ.get("PORTAL_BASE", "https://portal.nawinow.com").rstrip("/")
 WAKTU_HABIS = 60
@@ -98,6 +99,65 @@ def ambil_daftar_dari_sheet(produk: list[dict], cadangan: dict) -> tuple[dict, l
         return None
 
     return hasil.get("sku") or {}, hasil.get("baru") or []
+
+
+def kirim_stok(baris: list[dict]) -> None:
+    """
+    Kirim angka stok pasti ke Apps Script, untuk disajikan kepada reseller yang
+    sudah masuk. Angka ini sengaja TIDAK ditulis ke berkas mana pun di repo —
+    repo-nya public. Hanya SKU yang dicentang yang ikut dikirim.
+    """
+    url = os.environ.get("HUB_API_URL")
+    if not url:
+        return
+
+    muatan = json.dumps({
+        "kode": os.environ.get("HUB_TOKEN", ""),
+        "aksi": "simpan-stok",
+        "stok": baris,
+    }).encode()
+
+    req = urllib.request.Request(url, data=muatan, method="POST")
+    req.add_header("Content-Type", "application/json")
+    try:
+        with urllib.request.urlopen(req, timeout=WAKTU_HABIS) as r:
+            hasil = json.loads(r.read().decode())
+    except Exception as e:  # noqa: BLE001
+        print(f"! Angka stok gagal dikirim ke Sheet ({e}). Katalog publik tetap terbit.")
+        return
+
+    if hasil.get("ok"):
+        print(f"Stok  : {hasil.get('tersimpan', 0)} baris angka dikirim ke Sheet")
+    else:
+        print(f"! Sheet menolak angka stok: {hasil.get('error')}")
+
+
+def tulis_config_js(url: str) -> bool:
+    """
+    Tanam URL Apps Script ke config.js supaya halaman bisa memanggilnya sendiri.
+
+    URL ini memang berakhir terbuka di repo public — sama seperti alamat API mana
+    pun yang dipakai browser. Gerbangnya bukan kerahasiaan URL, melainkan kode
+    reseller. HUB_TOKEN tidak pernah ikut ke sini.
+    """
+    isi = (
+        "/**\n"
+        " * Sambungan data Warehouse Hub.\n"
+        " *\n"
+        " * Berkas ini ditulis otomatis oleh scripts/sinkron.py — jangan disunting tangan,\n"
+        " * perubahan akan tertimpa pada sinkron berikutnya.\n"
+        " *\n"
+        " * HUB_DATA_URL — katalog status, dibaca semua pengunjung.\n"
+        " * HUB_API_URL  — Apps Script, dipanggil hanya saat reseller memasukkan kodenya.\n"
+        " */\n"
+        'window.HUB_DATA_URL = "data/katalog.json";\n'
+        f'window.HUB_API_URL  = "{url}";\n'
+    )
+    lama = BERKAS_JS.read_text(encoding="utf-8") if BERKAS_JS.exists() else ""
+    if lama == isi:
+        return False
+    BERKAS_JS.write_text(isi, encoding="utf-8")
+    return True
 
 
 def minta(url: str, data: dict | None = None, token: str | None = None) -> dict:
@@ -193,7 +253,7 @@ def main() -> int:
         daftar = config.get("sku", {})
         sumber_daftar = "sku-tampil.json"
 
-    keluar, terpakai = [], set()
+    keluar, terpakai, angka = [], set(), []
     for it in semua:
         sku = it.get("sku")
         aturan = daftar.get(sku)
@@ -202,6 +262,12 @@ def main() -> int:
         if not aturan or not aturan.get("tampil"):
             continue
         terpakai.add(sku)
+        angka.append({
+            "sku": sku,
+            "varian": it.get("varian") or "",
+            "size": it.get("size") or "",
+            "qty": it.get("current_stock") or 0,
+        })
         keluar.append({
             "sku": sku,
             "nama": aturan.get("nama_tampil") or it.get("nama") or sku,
@@ -225,6 +291,10 @@ def main() -> int:
     BERKAS_KELUAR.write_text(
         json.dumps(hasil, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
     )
+
+    kirim_stok(angka)
+    if os.environ.get("HUB_API_URL") and tulis_config_js(os.environ["HUB_API_URL"]):
+        print("config.js diperbarui dengan alamat Apps Script")
 
     diminta = {s for s, a in daftar.items() if a.get("tampil")}
     hilang = sorted(diminta - terpakai)

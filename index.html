@@ -52,6 +52,9 @@ body{
 }
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
+/* Wajib: setiap `display` yang kita tulis sendiri mengalahkan [hidden] bawaan
+   peramban. Tanpa baris ini, elemen ber-atribut hidden tetap terlihat. */
+[hidden]{display:none !important}
 a{color:var(--aksen)}
 :focus-visible{outline:2px solid var(--aksen); outline-offset:2px; border-radius:6px}
 .wadah{max-width:1180px; margin:0 auto; padding:0 16px}
@@ -168,6 +171,45 @@ tbody tr:last-child td{border-bottom:0}
 }
 .eta{font-size:12px;color:var(--teks-redup);white-space:nowrap}
 .sku-hp{display:none}
+
+/* Kolom stok hanya ada setelah reseller masuk. */
+.kol-stok{display:none}
+body.masuk th.kol-stok{display:table-cell}
+body.masuk td.kol-stok{display:table-cell}
+.qty{font-variant-numeric:tabular-nums;font-weight:650;font-size:14.5px}
+.qty small{font-weight:400;font-size:11.5px;color:var(--teks-samar);margin-left:2px}
+.qty.nol{color:var(--habis-teks)}
+
+/* Identitas reseller di header */
+.sesi{display:flex;align-items:center;gap:8px;min-width:0}
+.sesi .nama{
+  display:flex;align-items:center;gap:6px;height:34px;padding:0 11px;
+  background:var(--aksen-lembut);color:var(--aksen);border-radius:99px;
+  font-size:13px;font-weight:600;max-width:190px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;
+}
+
+/* Formulir kode */
+.kode-isian{
+  width:100%;height:48px;padding:0 14px;margin-top:4px;
+  background:var(--bg);border:1px solid var(--border-kuat);border-radius:11px;
+  font-size:17px;font-weight:600;letter-spacing:.08em;text-align:center;
+  text-transform:uppercase;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+.kode-isian::placeholder{letter-spacing:normal;font-weight:400;text-transform:none;font-family:inherit}
+.kode-isian:disabled{opacity:.6}
+.tbl-lebar{
+  width:100%;height:46px;margin-top:10px;border:0;border-radius:11px;
+  background:var(--aksen);color:var(--aksen-teks);font-size:15px;font-weight:650;
+}
+.tbl-lebar:disabled{opacity:.6;cursor:progress}
+.galat{
+  display:none;gap:8px;margin-top:10px;padding:10px 12px;border-radius:10px;
+  background:var(--habis-bg);color:var(--habis-teks);border:1px solid var(--habis-garis);
+  font-size:13px;line-height:1.45;
+}
+.galat.tampil{display:flex}
+.bantu{font-size:12.5px;color:var(--teks-samar);line-height:1.5;margin-top:12px}
 .kosong{padding:56px 20px;text-align:center;color:var(--teks-redup)}
 .kosong .besar{font-size:34px;line-height:1;margin-bottom:10px;opacity:.55}
 .kosong b{display:block;color:var(--teks);font-size:15px;margin-bottom:4px}
@@ -283,6 +325,11 @@ footer.kaki{padding:18px 0 40px;font-size:12.5px;color:var(--teks-samar);text-al
   tbody td[data-label="Warna"],tbody td[data-label="Ukuran"]{width:50%}
   tbody td[data-label="Warna"]{border-right:1px solid var(--border)}
   tbody td[data-label="Restock"]{border-bottom:0}
+  /* Kolom stok mengambil satu baris penuh di kartu — angkanya yang paling dicari
+     reseller, jadi jangan dipepetkan ke setengah lebar. */
+  body.masuk tbody td.kol-stok{
+    display:flex;width:100%;border-top:1px solid var(--border);border-bottom:0;
+  }
   /* Mayoritas baris tidak punya PO berjalan — baris "Restock —" kosong hanya
      memakan 44px per kartu, jadi disembunyikan saja di HP. */
   tbody td.tanpa-restock{display:none}
@@ -300,6 +347,12 @@ footer.kaki{padding:18px 0 40px;font-size:12.5px;color:var(--teks-samar);text-al
   table.matriks tbody th{position:static}
   table.matriks td::before{content:none}
   .matriks-grup{padding:12px}
+}
+@media (max-width:520px){
+  /* Setelah reseller masuk, header berisi tema + nama toko + keluar. Subjudul
+     merek jadi rebutan ruang dan membuat judulnya membungkus — dibuang saja. */
+  .merek span{display:none}
+  .sesi .nama{max-width:118px;padding:0 9px;font-size:12.5px}
 }
 @media (max-width:420px){
   .ringkas{gap:8px}
@@ -325,6 +378,14 @@ footer.kaki{padding:18px 0 40px;font-size:12.5px;color:var(--teks-samar);text-al
       </svg>
     </button>
     <button class="tbl-utama" id="tblMasuk" type="button">Masuk reseller</button>
+    <div class="sesi" id="sesi" hidden>
+      <span class="nama" id="namaReseller"></span>
+      <button class="tbl-ikon" id="tblKeluar" type="button" title="Keluar" aria-label="Keluar dari akun reseller">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -372,6 +433,7 @@ footer.kaki{padding:18px 0 40px;font-size:12.5px;color:var(--teks-samar);text-al
               <th class="urut" data-kolom="varian" aria-sort="none">Warna<span class="panah">▲</span></th>
               <th class="urut" data-kolom="size" aria-sort="none">Ukuran<span class="panah">▲</span></th>
               <th class="urut" data-kolom="status" aria-sort="none">Ketersediaan<span class="panah">▲</span></th>
+              <th class="urut kol-stok" data-kolom="qty" aria-sort="none">Stok<span class="panah">▲</span></th>
               <th>Restock</th>
             </tr>
           </thead>
@@ -402,7 +464,7 @@ footer.kaki{padding:18px 0 40px;font-size:12.5px;color:var(--teks-samar);text-al
 <footer class="kaki">
   <div class="wadah">
     <span class="sinkron"><i class="denyut" aria-hidden="true"></i><span id="waktuSinkron">memuat…</span></span><br>
-    Angka stok pasti hanya tampil setelah masuk sebagai reseller.
+    <span id="catatanKaki">Angka stok pasti hanya tampil setelah masuk sebagai reseller.</span>
   </div>
 </footer>
 
@@ -448,6 +510,39 @@ document.getElementById("tblTema").addEventListener("click", function(){
 var semua = [], tersaring = [];
 var kolomUrut = "sku", arahUrut = 1, halaman = 1, perHalaman = 25, bentuk = "tabel";
 
+/* Sesi reseller. stok = { "sku||varian||size": jumlah }. Null = belum masuk. */
+var sesi = null;
+var KUNCI_KODE = "hub_kode";
+
+function ls(k, v) {
+  try {
+    if (v === undefined) return localStorage.getItem(k);
+    if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v);
+  } catch (e) {}
+  return null;
+}
+
+function kunciStok(it) {
+  return it.sku + "||" + (it.varian || "") + "||" + (it.size || "");
+}
+
+function qty(it) {
+  if (!sesi) return null;
+  var v = sesi.stok[kunciStok(it)];
+  return v === undefined ? null : v;
+}
+
+function apiPost(muatan) {
+  if (!window.HUB_API_URL) return Promise.reject(new Error("BELUM_TERSAMBUNG"));
+  return fetch(window.HUB_API_URL, {
+    method: "POST",
+    // text/plain menjadikannya "simple request" sehingga tidak memicu preflight
+    // OPTIONS, yang tidak dilayani Apps Script.
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(muatan),
+  }).then(function (r) { return r.json(); });
+}
+
 var URUTAN_STATUS = { habis:0, menipis:1, aman:2 };
 var URUTAN_SIZE = { "S":1,"M":2,"L":3,"XL":4,"XXL":5,"XXXL":6,"All Size":9 };
 var LABEL = { aman:"Stok aman", menipis:"Menipis", habis:"Habis" };
@@ -462,7 +557,7 @@ function esc(s){
 function rangkaMuat(){
   var baris = "";
   for(var i=0;i<8;i++){
-    baris += '<tr><td colspan="6"><div class="rangka"></div></td></tr>';
+    baris += '<tr><td colspan="7"><div class="rangka"></div></td></tr>';
   }
   document.getElementById("isiTabel").innerHTML = baris;
 }
@@ -546,6 +641,7 @@ function urutkan(){
   tersaring.sort(function(a,b){
     var x, y;
     if(kolomUrut === "status"){ x = URUTAN_STATUS[a.status]; y = URUTAN_STATUS[b.status]; }
+    else if(kolomUrut === "qty"){ x = qty(a); y = qty(b); x = x === null ? -1 : x; y = y === null ? -1 : y; }
     else if(kolomUrut === "size"){ x = URUTAN_SIZE[a.size]||8; y = URUTAN_SIZE[b.size]||8; }
     else { x = String(a[kolomUrut]||"").toLowerCase(); y = String(b[kolomUrut]||"").toLowerCase(); }
     if(x < y) return -1 * arahUrut;
@@ -573,6 +669,23 @@ function hitungRingkas(){
 function lencana(status){
   var ikon = status === "aman" ? "●" : status === "menipis" ? "◐" : "○";
   return '<span class="lencana l-' + status + '"><span aria-hidden="true">' + ikon + "</span>" + LABEL[status] + "</span>";
+}
+
+function selQty(it){
+  var v = qty(it);
+  if (v === null) return '<span class="eta" style="opacity:.5">—</span>';
+  return '<span class="qty' + (v <= 0 ? " nol" : "") + '">' +
+         v.toLocaleString("id-ID") + "<small>pcs</small></span>";
+}
+
+/* Sel matriks: teks status untuk umum, angka pasti untuk reseller yang sudah masuk. */
+function selMatriks(it){
+  if(!it) return '<td><span class="sel s-kosong">–</span></td>';
+  var v = qty(it);
+  var isi = v !== null
+    ? v.toLocaleString("id-ID")
+    : (it.status === "aman" ? "Aman" : it.status === "menipis" ? "Menipis" : "Habis");
+  return '<td><span class="sel s-' + it.status + '">' + isi + "</span></td>";
 }
 
 function tglPendek(iso){
@@ -604,6 +717,7 @@ function gambarTabel(){
       '<td data-label="Warna">' + esc(it.varian) + "</td>" +
       '<td data-label="Ukuran">' + esc(it.size) + "</td>" +
       '<td data-label="Ketersediaan">' + lencana(it.status) + "</td>" +
+      '<td class="kol-stok" data-label="Stok">' + selQty(it) + "</td>" +
       '<td data-label="Restock"' + (adaRestock ? "" : ' class="tanpa-restock"') + ">" + restock + "</td>" +
     "</tr>";
   }).join("");
@@ -656,16 +770,11 @@ function gambarMatriks(){
     });
     size.sort(function(a,b){ return (URUTAN_SIZE[a]||8) - (URUTAN_SIZE[b]||8) || a.localeCompare(b); });
     var peta = {};
-    g.baris.forEach(function(it){ peta[it.varian + "||" + it.size] = it.status; });
+    g.baris.forEach(function(it){ peta[it.varian + "||" + it.size] = it; });
 
     var kepala = size.map(function(s){ return "<th>" + esc(s) + "</th>"; }).join("");
     var isi = varian.map(function(v){
-      var sel = size.map(function(s){
-        var st = peta[v + "||" + s];
-        if(!st) return '<td><span class="sel s-kosong">–</span></td>';
-        var teks = st === "aman" ? "Aman" : st === "menipis" ? "Menipis" : "Habis";
-        return '<td><span class="sel s-' + st + '">' + teks + "</span></td>";
-      }).join("");
+      var sel = size.map(function(s){ return selMatriks(peta[v + "||" + s]); }).join("");
       return "<tr><th>" + esc(v) + "</th>" + sel + "</tr>";
     }).join("");
 
@@ -699,16 +808,11 @@ function bukaDetail(sku, pemicu){
   });
   size.sort(function(a,b){ return (URUTAN_SIZE[a]||8) - (URUTAN_SIZE[b]||8) || a.localeCompare(b); });
   var peta = {};
-  baris.forEach(function(it){ peta[it.varian + "||" + it.size] = it.status; });
+  baris.forEach(function(it){ peta[it.varian + "||" + it.size] = it; });
 
   var kepala = size.map(function(s){ return "<th>" + esc(s) + "</th>"; }).join("");
   var isiMatriks = varian.map(function(v){
-    var sel = size.map(function(s){
-      var st = peta[v + "||" + s];
-      if(!st) return '<td><span class="sel s-kosong">–</span></td>';
-      var teks = st === "aman" ? "Aman" : st === "menipis" ? "Menipis" : "Habis";
-      return '<td><span class="sel s-' + st + '">' + teks + "</span></td>";
-    }).join("");
+    var sel = size.map(function(s){ return selMatriks(peta[v + "||" + s]); }).join("");
     return "<tr><th>" + esc(v) + "</th>" + sel + "</tr>";
   }).join("");
 
@@ -716,15 +820,34 @@ function bukaDetail(sku, pemicu){
     ? "± " + tglPendek(restock[0].restock.eta) + " (" + restock.length + " varian)"
     : "belum ada PO berjalan";
 
+  var barisTotal = "";
+  if(sesi){
+    var total = 0, adaAngka = false;
+    baris.forEach(function(it){
+      var v = qty(it);
+      if(v !== null){ total += v; adaAngka = true; }
+    });
+    if(adaAngka){
+      barisTotal = '<div class="baris-info"><span>Total stok gudang</span><b>' +
+        total.toLocaleString("id-ID") + " pcs</b></div>";
+    }
+  }
+
+  var catatan = sesi
+    ? '<div class="catatan"><span aria-hidden="true">✅</span><div><b>Anda melihat angka pasti.</b> ' +
+      "Jumlah di atas adalah stok gudang, bukan stok toko Anda.</div></div>"
+    : '<div class="catatan"><span aria-hidden="true">🔒</span><div><b>Angka stok pasti disembunyikan.</b> ' +
+      "Masuk dengan kode reseller untuk melihat jumlah persis per varian.</div></div>";
+
   document.getElementById("isiModal").innerHTML =
     '<div class="baris-info"><span>Varian tersedia</span><b>' + varian.length + " warna × " + size.length + " ukuran</b></div>" +
+    barisTotal +
     '<div class="baris-info"><span>Stok aman</span><b>' + n.aman + " dari " + baris.length + " kombinasi</b></div>" +
     '<div class="baris-info"><span>Perlu perhatian</span><b>' + (n.menipis + n.habis) + " kombinasi</b></div>" +
     '<div class="baris-info"><span>Perkiraan restock</span><b>' + esc(etaTeks) + "</b></div>" +
     '<div class="gulir" style="margin-top:14px"><table class="matriks"><thead><tr><th>Warna</th>' + kepala +
       "</tr></thead><tbody>" + isiMatriks + "</tbody></table></div>" +
-    '<div class="catatan"><span aria-hidden="true">🔒</span><div><b>Angka stok pasti disembunyikan.</b> ' +
-      "Masuk dengan kode reseller untuk melihat jumlah persis dan saran stok aman untuk toko Anda.</div></div>";
+    catatan;
 
   var tirai = document.getElementById("tirai");
   tirai.hidden = false;
@@ -798,21 +921,128 @@ function gantiBentuk(baru){
 document.getElementById("tabTabel").addEventListener("click", function(){ gantiBentuk("tabel"); });
 document.getElementById("tabMatriks").addEventListener("click", function(){ gantiBentuk("matriks"); });
 
-document.getElementById("tblMasuk").addEventListener("click", function(){
+/* ── Sesi reseller ────────────────────────────────────────────────────────── */
+var PESAN_GALAT = {
+  KODE_RESELLER_SALAH: "Kode tidak dikenal. Periksa lagi, atau minta kode baru ke admin.",
+  KODE_NONAKTIF: "Kode ini sudah dinonaktifkan. Hubungi admin untuk mengaktifkannya kembali.",
+  KODE_KOSONG: "Kodenya belum diisi.",
+  KODE_SALAH: "Kode tidak dikenal. Periksa lagi, atau minta kode baru ke admin.",
+};
+
+function terapkanSesi(){
+  var masuk = !!sesi;
+  document.body.classList.toggle("masuk", masuk);
+  document.getElementById("tblMasuk").hidden = masuk;
+  document.getElementById("sesi").hidden = !masuk;
+  if(masuk) document.getElementById("namaReseller").textContent = sesi.nama;
+  document.getElementById("catatanKaki").textContent = masuk
+    ? "Angka yang tampil adalah stok gudang, bukan stok toko Anda."
+    : "Angka stok pasti hanya tampil setelah masuk sebagai reseller.";
+  gambar();
+}
+
+function bukaModal(fokus){
+  document.getElementById("tirai").hidden = false;
+  (fokus || document.getElementById("tutupModal")).focus();
+}
+
+function bukaMasuk(pemicu){
+  pemicuTerakhir = pemicu || null;
   document.getElementById("judulModal").textContent = "Masuk sebagai reseller";
   document.getElementById("subModal").textContent = "Untuk melihat angka stok pasti";
-  document.getElementById("isiModal").innerHTML = window.HUB_API_URL
-    ? "<p>Formulir masuk akan tampil di sini.</p>"
-    : '<div class="catatan"><span aria-hidden="true">🧪</span><div><b>Mode pratinjau.</b> ' +
-      "Login reseller aktif setelah lapisan data reseller tersambung. Sekarang halaman ini " +
-      "memakai data contoh supaya tampilannya bisa dinilai dulu.</div></div>";
-  var tirai = document.getElementById("tirai");
-  pemicuTerakhir = this;
-  tirai.hidden = false;
-  document.getElementById("tutupModal").focus();
+
+  if(!window.HUB_API_URL){
+    document.getElementById("isiModal").innerHTML =
+      '<div class="catatan"><span aria-hidden="true">🧪</span><div><b>Belum tersambung.</b> ' +
+      "Alamat layanan reseller belum terisi di config.js, jadi halaman ini baru bisa " +
+      "menampilkan status stok.</div></div>";
+    bukaModal();
+    return;
+  }
+
+  document.getElementById("isiModal").innerHTML =
+    '<label for="kodeInput" style="font-size:13.5px;color:var(--teks-redup)">Kode reseller</label>' +
+    '<input class="kode-isian" id="kodeInput" type="text" inputmode="text" autocomplete="off" ' +
+      'autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="ketik kode di sini">' +
+    '<button class="tbl-lebar" id="tblKirimKode" type="button">Masuk</button>' +
+    '<div class="galat" id="galatKode"><span aria-hidden="true">⚠️</span><span id="galatTeks"></span></div>' +
+    '<div class="bantu">Kode diberikan oleh admin. Cukup diketik sekali — tersimpan di ' +
+      "peramban ini sampai Anda menekan keluar.</div>";
+
+  var isian = document.getElementById("kodeInput");
+  document.getElementById("tblKirimKode").addEventListener("click", kirimKode);
+  isian.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){ e.preventDefault(); kirimKode(); }
+  });
+  bukaModal(isian);
+}
+
+function tampilGalat(teks){
+  var kotak = document.getElementById("galatKode");
+  if(!kotak) return;
+  document.getElementById("galatTeks").textContent = teks;
+  kotak.classList.add("tampil");
+}
+
+function kirimKode(){
+  var isian = document.getElementById("kodeInput");
+  var tombol = document.getElementById("tblKirimKode");
+  var kode = isian.value.trim();
+  if(!kode){ tampilGalat(PESAN_GALAT.KODE_KOSONG); isian.focus(); return; }
+
+  document.getElementById("galatKode").classList.remove("tampil");
+  isian.disabled = true; tombol.disabled = true; tombol.textContent = "Memeriksa…";
+
+  function selesai(){
+    if(!document.getElementById("kodeInput")) return;  // modal sudah ditutup
+    isian.disabled = false; tombol.disabled = false; tombol.textContent = "Masuk";
+    isian.focus(); isian.select();
+  }
+
+  apiPost({ aksi: "masuk", kode_reseller: kode })
+    .then(function(h){
+      if(h && h.ok){
+        sesi = { nama: h.nama || "Reseller", stok: h.stok || {} };
+        ls(KUNCI_KODE, kode);
+        tutup();
+        terapkanSesi();
+        return;
+      }
+      selesai();
+      tampilGalat(PESAN_GALAT[h && h.error] || "Tidak bisa masuk. Coba beberapa saat lagi.");
+    })
+    .catch(function(){
+      selesai();
+      tampilGalat("Tidak bisa menghubungi layanan. Periksa koneksi Anda.");
+    });
+}
+
+function cobaMasukOtomatis(){
+  var kode = ls(KUNCI_KODE);
+  if(!kode || !window.HUB_API_URL) return;
+  apiPost({ aksi: "masuk", kode_reseller: kode })
+    .then(function(h){
+      if(h && h.ok){
+        sesi = { nama: h.nama || "Reseller", stok: h.stok || {} };
+        terapkanSesi();
+      } else if(h && (h.error === "KODE_RESELLER_SALAH" || h.error === "KODE_NONAKTIF")){
+        // Kode sudah dicabut admin — buang supaya tidak dicoba terus tiap buka.
+        ls(KUNCI_KODE, null);
+      }
+    })
+    .catch(function(){});  // jaringan mati: katalog status tetap tampil
+}
+
+document.getElementById("tblMasuk").addEventListener("click", function(){ bukaMasuk(this); });
+document.getElementById("tblKeluar").addEventListener("click", function(){
+  sesi = null;
+  ls(KUNCI_KODE, null);
+  terapkanSesi();
+  document.getElementById("tblMasuk").focus();
 });
 
 muat();
+cobaMasukOtomatis();
 })();
 </script>
 </body>

@@ -61,7 +61,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           # sku-tampil.json ikut karena ia salinan centang terakhir dari Sheet —
           # sekaligus riwayat siapa mengubah apa, dan cadangan bila Sheet mati.
-          git add data/katalog.json sku-tampil.json
+          git add data/katalog.json sku-tampil.json config.js
           if git diff --staged --quiet; then
             echo "Stok tidak berubah — tidak ada commit."
             exit 0
