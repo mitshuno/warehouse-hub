@@ -157,9 +157,15 @@ function bacaDaftar_() {
 }
 
 /**
- * Masukkan SKU yang belum ada sebagai baris baru, centang KOSONG.
- * SKU yang sudah ada tidak disentuh sama sekali — centang dan nama tampilan
- * yang sudah Anda atur tidak boleh tertimpa oleh sinkron.
+ * Masukkan SKU yang belum ada sebagai baris baru.
+ *
+ * SKU yang sudah ada TIDAK disentuh sama sekali — centang dan nama tampilan yang
+ * sudah Anda atur tidak boleh tertimpa oleh sinkron.
+ *
+ * Isi awal baris baru diambil dari nilai bawaan yang dikirim Actions bila ada.
+ * Itu hanya terjadi saat pindah dari sku-tampil.json ke Sheet ini, supaya keadaan
+ * centang yang sudah berjalan ikut terbawa. Produk yang benar-benar baru di gudang
+ * tidak membawa bawaan apa pun, jadi masuk dengan centang KOSONG.
  */
 function tambahSkuBaru_(produk) {
   var sh = sheet_();
@@ -181,7 +187,15 @@ function tambahSkuBaru_(produk) {
     adaSkrg[sku] = true;
     skuBaru.push(sku);
     var nama = String(p.nama || sku);
-    barisBaru.push([sku, nama, false, tebakKategori_(nama), '', p.varian || 1, hariIni]);
+    barisBaru.push([
+      sku,
+      nama,
+      p.tampil === true,
+      String(p.kategori || '') || tebakKategori_(nama),
+      String(p.nama_tampil || ''),
+      p.varian || 1,
+      hariIni,
+    ]);
   });
 
   if (barisBaru.length) {

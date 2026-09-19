@@ -40,7 +40,7 @@ BASE = os.environ.get("PORTAL_BASE", "https://portal.nawinow.com").rstrip("/")
 WAKTU_HABIS = 60
 
 
-def ambil_daftar_dari_sheet(produk: list[dict]) -> tuple[dict, list[str]] | None:
+def ambil_daftar_dari_sheet(produk: list[dict], cadangan: dict) -> tuple[dict, list[str]] | None:
     """
     Kirim seluruh SKU yang ada di WMS ke Apps Script, terima kembali daftar
     centangnya. SKU yang belum ada di Sheet ditambahkan di sana dengan centang
@@ -59,7 +59,19 @@ def ambil_daftar_dari_sheet(produk: list[dict]) -> tuple[dict, list[str]] | None
         if not sku:
             continue
         if sku not in ringkas:
-            ringkas[sku] = {"sku": sku, "nama": it.get("nama") or sku, "varian": 0}
+            # Nilai dari cadangan dipakai Apps Script sebagai isi awal baris BARU saja.
+            # Gunanya saat pindah ke Sheets: keadaan centang yang sudah berjalan ikut
+            # terbawa, jadi situs tidak mendadak kosong. Baris yang sudah ada di Sheet
+            # tidak pernah tersentuh oleh ini.
+            awal = cadangan.get(sku) or {}
+            ringkas[sku] = {
+                "sku": sku,
+                "nama": it.get("nama") or sku,
+                "varian": 0,
+                "tampil": bool(awal.get("tampil")),
+                "kategori": awal.get("kategori") or "",
+                "nama_tampil": awal.get("nama_tampil") or "",
+            }
         ringkas[sku]["varian"] += 1
 
     muatan = json.dumps({
@@ -160,7 +172,7 @@ def main() -> int:
     semua = laporan.get("items", [])
 
     # Sheet adalah sumber kebenaran daftar centang bila tersedia; berkas hanya cadangan.
-    dari_sheet = ambil_daftar_dari_sheet(semua)
+    dari_sheet = ambil_daftar_dari_sheet(semua, config.get("sku", {}))
     if dari_sheet is not None:
         daftar, sku_baru = dari_sheet
         config["sku"] = daftar
@@ -169,8 +181,14 @@ def main() -> int:
         )
         sumber_daftar = "Google Sheets"
         if sku_baru:
-            print(f"+ {len(sku_baru)} SKU baru ditambahkan ke Sheet (belum dicentang): "
-                  f"{', '.join(sku_baru)}")
+            # Jangan bilang "belum dicentang" di sini: saat pindah dari berkas ke
+            # Sheet, sebagian baris baru justru langsung tercentang karena membawa
+            # keadaan lama. Yang masuk tanpa centang hanya yang benar-benar baru.
+            tanpa_centang = [s for s in sku_baru if not (daftar.get(s) or {}).get("tampil")]
+            print(f"+ {len(sku_baru)} SKU ditambahkan ke Sheet"
+                  + (f", {len(tanpa_centang)} di antaranya tanpa centang" if tanpa_centang else "")
+                  + f": {', '.join(sku_baru[:15])}"
+                  + (f" … (+{len(sku_baru) - 15} lagi)" if len(sku_baru) > 15 else ""))
     else:
         daftar = config.get("sku", {})
         sumber_daftar = "sku-tampil.json"
