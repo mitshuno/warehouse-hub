@@ -1,12 +1,11 @@
 /**
  * Sambungan data Warehouse Hub.
  *
- * HUB_DATA_URL  — berkas katalog stok yang dihasilkan GitHub Actions dari WMS.
- *                 Biarkan apa adanya kecuali lokasinya dipindah.
+ * Berkas ini ditulis otomatis oleh scripts/sinkron.py — jangan disunting tangan,
+ * perubahan akan tertimpa pada sinkron berikutnya.
  *
- * HUB_API_URL   — URL web app Apps Script (berakhiran /exec) untuk lapisan reseller:
- *                 login kode reseller, angka stok pasti, stok toko, saran stok aman.
- *                 Dibiarkan kosong = mode pratinjau, hanya katalog status yang tampil.
+ * HUB_DATA_URL — katalog status, dibaca semua pengunjung.
+ * HUB_API_URL  — Apps Script, dipanggil hanya saat reseller memasukkan kodenya.
  */
 window.HUB_DATA_URL = "data/katalog.json";
-window.HUB_API_URL  = "";
+window.HUB_API_URL  = "https://script.google.com/macros/s/AKfycbwuxy_YMnJGg150o3HagZtIDBCD3pep_VkOqE5ChUjPKmXOLIyBzJtguy9BsBAJApvbOw/exec";
