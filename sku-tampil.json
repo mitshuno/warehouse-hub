@@ -27,12 +27,12 @@
    "nama_tampil": ""
   },
   "DASTER": {
-   "tampil": false,
-   "kategori": "Lainnya",
+   "tampil": true,
+   "kategori": "Daster",
    "nama_tampil": ""
   },
   "DASTER TANGAN": {
-   "tampil": false,
+   "tampil": true,
    "kategori": "Daster",
    "nama_tampil": ""
   },

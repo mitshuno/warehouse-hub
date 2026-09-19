@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-19T08:15:39Z",
+ "generated_at": "2026-09-19T08:25:27Z",
  "mode": "status",
  "sumber": "wms",
  "items": [
@@ -20,6 +20,96 @@
    "varian": "Khaki",
    "size": "ALL SIZE",
    "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DASTER",
+   "nama": "BYNEENA",
+   "kategori": "Daster",
+   "varian": "Coklat Muda",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DASTER",
+   "nama": "BYNEENA",
+   "kategori": "Daster",
+   "varian": "Mahogany",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DASTER",
+   "nama": "BYNEENA",
+   "kategori": "Daster",
+   "varian": "Sand",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DASTER",
+   "nama": "BYNEENA",
+   "kategori": "Daster",
+   "varian": "Taupe",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DASTER TANGAN",
+   "nama": "DASTER",
+   "kategori": "Daster",
+   "varian": "Burgundy",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DASTER TANGAN",
+   "nama": "DASTER",
+   "kategori": "Daster",
+   "varian": "Hitam",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DASTER TANGAN",
+   "nama": "DASTER",
+   "kategori": "Daster",
+   "varian": "Ivory",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DASTER TANGAN",
+   "nama": "DASTER",
+   "kategori": "Daster",
+   "varian": "Sapphire Blue",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DASTER TANGAN",
+   "nama": "DASTER",
+   "kategori": "Daster",
+   "varian": "Taupe",
+   "size": "ALL SIZE",
+   "status": "aman",
    "laris": false,
    "restock": null
   },
