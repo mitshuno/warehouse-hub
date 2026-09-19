@@ -1,0 +1,1037 @@
+{
+ "generated_at": "2026-09-19T08:15:39Z",
+ "mode": "status",
+ "sumber": "wms",
+ "items": [
+  {
+   "sku": "AMR01",
+   "nama": "Ameera Abaya",
+   "kategori": "Abaya",
+   "varian": "Hitam",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "AMR05",
+   "nama": "Ameera Abaya",
+   "kategori": "Abaya",
+   "varian": "Khaki",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DSTR1",
+   "nama": "Daster Wanita Aurelie Dewasa Lengan",
+   "kategori": "Daster",
+   "varian": "Hitam",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DSTR2",
+   "nama": "Daster Wanita Aurelie Dewasa Lengan",
+   "kategori": "Daster",
+   "varian": "Cream",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DSTR3",
+   "nama": "Daster Wanita Aurelie Dewasa Lengan",
+   "kategori": "Daster",
+   "varian": "Burgundy",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DSTR4",
+   "nama": "Daster Wanita Aurelie Dewasa Lengan",
+   "kategori": "Daster",
+   "varian": "Coklat Brown",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "DSTR5",
+   "nama": "Daster Wanita Aurelie Dewasa Lengan",
+   "kategori": "Daster",
+   "varian": "Maroon Muda",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "KHBN01",
+   "nama": "Khiban French Khimar Bandana Syar'i",
+   "kategori": "Hijab",
+   "varian": "Hitam",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "KHBN02",
+   "nama": "Khiban French Khimar Bandana Syar'i",
+   "kategori": "Hijab",
+   "varian": "Mahogany",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "KHBN03",
+   "nama": "Khiban French Khimar Bandana Syar'i",
+   "kategori": "Hijab",
+   "varian": "Grey",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "KHBN04",
+   "nama": "Khiban French Khimar Bandana Syar'i",
+   "kategori": "Hijab",
+   "varian": "Cream",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "KHBN05",
+   "nama": "Khiban French Khimar Bandana Syar'i",
+   "kategori": "Hijab",
+   "varian": "Deep Mauve",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "KHBN06",
+   "nama": "Khiban French Khimar Bandana Syar'i",
+   "kategori": "Hijab",
+   "varian": "Taupe",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "KHBN07",
+   "nama": "Khiban French Khimar Bandana Syar'i",
+   "kategori": "Hijab",
+   "varian": "Putih",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "KHBN08",
+   "nama": "Khiban French Khimar Bandana Syar'i",
+   "kategori": "Hijab",
+   "varian": "Navy",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "KHBN09",
+   "nama": "Khiban French Khimar Bandana Syar'i",
+   "kategori": "Hijab",
+   "varian": "Maroon",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "KHBN10",
+   "nama": "Khiban French Khimar Bandana Syar'i",
+   "kategori": "Hijab",
+   "varian": "Frappuccino",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LATIFA02",
+   "nama": "Latifa Bergo Melayu",
+   "kategori": "Hijab",
+   "varian": "Hazelnut",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LATIFA08",
+   "nama": "Latifa Bergo Melayu",
+   "kategori": "Hijab",
+   "varian": "Oat",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LATIFA10",
+   "nama": "Latifa Bergo Melayu",
+   "kategori": "Hijab",
+   "varian": "Peanut",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LAYEELA01",
+   "nama": "Layeela Abaya 2in1 Outer",
+   "kategori": "Abaya",
+   "varian": "Taupe , L- XL",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LAYEELA01",
+   "nama": "Layeela Abaya 2in1 Outer",
+   "kategori": "Abaya",
+   "varian": "Taupe , S- M",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LAYEELA02",
+   "nama": "Layeela Abaya 2in1 Outer",
+   "kategori": "Abaya",
+   "varian": "Cream Muda, L- XL",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LAYEELA02",
+   "nama": "Layeela Abaya 2in1 Outer",
+   "kategori": "Abaya",
+   "varian": "Cream Muda, S-M",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LAYEELA03",
+   "nama": "Layeela Abaya 2in1 Outer",
+   "kategori": "Abaya",
+   "varian": "Mahogany , L-XL",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LAYEELA03",
+   "nama": "Layeela Abaya 2in1 Outer",
+   "kategori": "Abaya",
+   "varian": "Mahogany , S-M",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LAYEELA04",
+   "nama": "Layeela Abaya 2in1 Outer",
+   "kategori": "Abaya",
+   "varian": "Peanut, L- XL",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LAYEELA04",
+   "nama": "Layeela Abaya 2in1 Outer",
+   "kategori": "Abaya",
+   "varian": "Peanut, S- M",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LAYEELA05",
+   "nama": "Layeela Abaya 2in1 Outer",
+   "kategori": "Abaya",
+   "varian": "BURGUNDY",
+   "size": "L-XL",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "LAYEELA05",
+   "nama": "Layeela Abaya 2in1 Outer",
+   "kategori": "Abaya",
+   "varian": "BURGUNDY",
+   "size": "S-M",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN01",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Hitam",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN02",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Putih",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN03",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Coklat",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN04",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Burgundy",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN05",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Biskuit",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN06",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Cream",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN07",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Taupe",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN08",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Maroon",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN09",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Denim",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN10",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Silver",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN11",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Almond",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN12",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Sage",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN13",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Dark Grey",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MKN14",
+   "nama": "Mukena Alena",
+   "kategori": "Mukena",
+   "varian": "Nude",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA01",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Hitam",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA02",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Dark Grey",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA03",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Taupe",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA04",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Mauve",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA05",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Expresso",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA06",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Latte",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA07",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Putih",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA08",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Mahogany",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA09",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Nutella",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA10",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Lava",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA11",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Sand",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA12",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Khaki",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "MUSKIYA13",
+   "nama": "Muskiya Abaya",
+   "kategori": "Abaya",
+   "varian": "Burgundy",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "NAYRA01",
+   "nama": "Nayra Abaya Set Hijab French Khimar",
+   "kategori": "Abaya",
+   "varian": "Hitam",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "NAYRA02",
+   "nama": "Nayra Abaya Set Hijab French Khimar",
+   "kategori": "Abaya",
+   "varian": "Light Beige",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "NAYRA03",
+   "nama": "Nayra Abaya Set Hijab French Khimar",
+   "kategori": "Abaya",
+   "varian": "Putih",
+   "size": "ALL SIZE",
+   "status": "habis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "NAYRA04",
+   "nama": "Nayra Abaya Set Hijab French Khimar",
+   "kategori": "Abaya",
+   "varian": "Champagne",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "NAYRA05",
+   "nama": "Nayra Abaya Set Hijab French Khimar",
+   "kategori": "Abaya",
+   "varian": "Dark Grey",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "NAYRA06",
+   "nama": "Nayra Abaya Set Hijab French Khimar",
+   "kategori": "Abaya",
+   "varian": "Light Grey",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "NAYRA07",
+   "nama": "Nayra Abaya Set Hijab French Khimar",
+   "kategori": "Abaya",
+   "varian": "Dusty Pink",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "NAYRA08",
+   "nama": "Nayra Abaya Set Hijab French Khimar",
+   "kategori": "Abaya",
+   "varian": "Latte",
+   "size": "ALL SIZE ",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "PSM01",
+   "nama": "Pashmina Viscose",
+   "kategori": "Hijab",
+   "varian": "Hitam",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "PSM02",
+   "nama": "Pashmina Viscose",
+   "kategori": "Hijab",
+   "varian": "Taupe",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "PSM03",
+   "nama": "Pashmina Viscose",
+   "kategori": "Hijab",
+   "varian": "Brown",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "PSM04",
+   "nama": "Pashmina Viscose",
+   "kategori": "Hijab",
+   "varian": "Coklat",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "PSM05",
+   "nama": "Pashmina Viscose",
+   "kategori": "Hijab",
+   "varian": "Latte",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "PSM06",
+   "nama": "Pashmina Rayon Viscose",
+   "kategori": "Hijab",
+   "varian": "Mahogany",
+   "size": "ALL SIZE",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "PSM07",
+   "nama": "Pashmina Viscose",
+   "kategori": "Hijab",
+   "varian": "Maroon",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "PSM08",
+   "nama": "Pashmina Viscose",
+   "kategori": "Hijab",
+   "varian": "Majolica Blue",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "PSM09",
+   "nama": "Pashmina Viscose",
+   "kategori": "Hijab",
+   "varian": "Dark Grey",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "PSM10",
+   "nama": "Pashmina Viscose",
+   "kategori": "Hijab",
+   "varian": "Light Grey",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "PSM11",
+   "nama": "Pashmina Viscose",
+   "kategori": "Hijab",
+   "varian": "Navy",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "PSM12",
+   "nama": "Pashmina Viscose",
+   "kategori": "Hijab",
+   "varian": "Dusty",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "SRY05",
+   "nama": "Hijab Soraya Pashmina Instan",
+   "kategori": "Hijab",
+   "varian": "Putih",
+   "size": "ALL SIZE",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "YMN01",
+   "nama": "Yumna Abaya Anti Deep",
+   "kategori": "Abaya",
+   "varian": "Mahogany",
+   "size": "L",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "YMN01",
+   "nama": "Yumna Abaya Anti Deep",
+   "kategori": "Abaya",
+   "varian": "Mahogany",
+   "size": "XL",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "YMN02",
+   "nama": "Yumna Abaya Anti Deep",
+   "kategori": "Abaya",
+   "varian": "Hazelnut",
+   "size": "L",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "YMN02",
+   "nama": "Yumna Abaya Anti Deep",
+   "kategori": "Abaya",
+   "varian": "Hazelnut",
+   "size": "XL",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "ZFR01",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Hitam",
+   "size": "L",
+   "status": "menipis",
+   "laris": true,
+   "restock": null
+  },
+  {
+   "sku": "ZFR01",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Hitam",
+   "size": "M",
+   "status": "habis",
+   "laris": true,
+   "restock": null
+  },
+  {
+   "sku": "ZFR01",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Hitam",
+   "size": "S",
+   "status": "habis",
+   "laris": true,
+   "restock": null
+  },
+  {
+   "sku": "ZFR02",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Taupe",
+   "size": "L",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "ZFR02",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Taupe",
+   "size": "M",
+   "status": "menipis",
+   "laris": true,
+   "restock": null
+  },
+  {
+   "sku": "ZFR02",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Taupe",
+   "size": "S",
+   "status": "menipis",
+   "laris": true,
+   "restock": null
+  },
+  {
+   "sku": "ZFR03",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Mahogany",
+   "size": "L",
+   "status": "menipis",
+   "laris": true,
+   "restock": null
+  },
+  {
+   "sku": "ZFR03",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Mahogany",
+   "size": "M",
+   "status": "habis",
+   "laris": true,
+   "restock": null
+  },
+  {
+   "sku": "ZFR03",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Mahogany",
+   "size": "S",
+   "status": "habis",
+   "laris": true,
+   "restock": null
+  },
+  {
+   "sku": "ZFR04",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Maroon",
+   "size": "L",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "ZFR04",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Maroon",
+   "size": "M",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "ZFR04",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Maroon",
+   "size": "S",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "ZFR05",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Dark Grey",
+   "size": "L",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "ZFR05",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Dark Grey",
+   "size": "M",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "ZFR05",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Dark Grey",
+   "size": "S",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "ZFR06",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Ivory",
+   "size": "L",
+   "status": "menipis",
+   "laris": true,
+   "restock": null
+  },
+  {
+   "sku": "ZFR06",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Ivory",
+   "size": "M",
+   "status": "habis",
+   "laris": true,
+   "restock": null
+  },
+  {
+   "sku": "ZFR06",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Ivory",
+   "size": "S",
+   "status": "habis",
+   "laris": true,
+   "restock": null
+  },
+  {
+   "sku": "ZFR07",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Burgundy",
+   "size": "L",
+   "status": "aman",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "ZFR07",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Burgundy",
+   "size": "M",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  },
+  {
+   "sku": "ZFR07",
+   "nama": "Zhafira Abaya Knit",
+   "kategori": "Abaya",
+   "varian": "Burgundy",
+   "size": "S",
+   "status": "menipis",
+   "laris": false,
+   "restock": null
+  }
+ ]
+}

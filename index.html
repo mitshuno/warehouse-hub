@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Etalase stok gudang untuk reseller — cek ketersediaan SKU sebelum menjual.">
+<title>Warehouse Hub — Stok Reseller</title>
+<style>
+/* ── Token warna ──────────────────────────────────────────────────────────── */
+:root{
+  --bg:#f5f7f8; --surface:#fff; --zebra:#fafbfc; --hover:#f0f4f4;
+  --border:#e2e6ea; --border-kuat:#cfd6dd;
+  --teks:#151a20; --teks-redup:#5f6874; --teks-samar:#8b95a1;
+  --aksen:#0f766e; --aksen-teks:#fff; --aksen-lembut:#e4f2f0;
+  --aman-teks:#136c32; --aman-bg:#e6f4ea; --aman-garis:#a9d8ba;
+  --tipis-teks:#9a5b06; --tipis-bg:#fcf2e2; --tipis-garis:#e7c489;
+  --habis-teks:#a92222; --habis-bg:#fcebeb; --habis-garis:#e6afaf;
+  --bayang:0 1px 2px rgba(16,24,32,.06), 0 4px 16px rgba(16,24,32,.05);
+  --radius:12px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-tema="terang"]){
+    --bg:#0e1216; --surface:#161b21; --zebra:#1a2027; --hover:#1f262e;
+    --border:#262d36; --border-kuat:#38414d;
+    --teks:#e7eaee; --teks-redup:#99a3b0; --teks-samar:#727d8b;
+    --aksen:#2dd4bf; --aksen-teks:#06201d; --aksen-lembut:#11312e;
+    --aman-teks:#5ed98b; --aman-bg:#14301f; --aman-garis:#276b42;
+    --tipis-teks:#f0b53f; --tipis-bg:#332611; --tipis-garis:#7a5a1c;
+    --habis-teks:#f58080; --habis-bg:#331a1a; --habis-garis:#7a3535;
+    --bayang:0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.3);
+  }
+}
+:root[data-tema="gelap"]{
+  --bg:#0e1216; --surface:#161b21; --zebra:#1a2027; --hover:#1f262e;
+  --border:#262d36; --border-kuat:#38414d;
+  --teks:#e7eaee; --teks-redup:#99a3b0; --teks-samar:#727d8b;
+  --aksen:#2dd4bf; --aksen-teks:#06201d; --aksen-lembut:#11312e;
+  --aman-teks:#5ed98b; --aman-bg:#14301f; --aman-garis:#276b42;
+  --tipis-teks:#f0b53f; --tipis-bg:#332611; --tipis-garis:#7a5a1c;
+  --habis-teks:#f58080; --habis-bg:#331a1a; --habis-garis:#7a3535;
+  --bayang:0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.3);
+}
+
+/* ── Dasar ────────────────────────────────────────────────────────────────── */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--teks);
+  font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--aksen)}
+:focus-visible{outline:2px solid var(--aksen); outline-offset:2px; border-radius:6px}
+.wadah{max-width:1180px; margin:0 auto; padding:0 16px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+header.atas{
+  position:sticky; top:0; z-index:30; background:var(--surface);
+  border-bottom:1px solid var(--border);
+}
+.atas-isi{display:flex; align-items:center; gap:12px; height:60px}
+.merek{display:flex; align-items:center; gap:10px; margin-right:auto; min-width:0}
+.merek .ikon{
+  width:32px;height:32px;flex:none;border-radius:9px;background:var(--aksen);
+  color:var(--aksen-teks);display:grid;place-items:center;font-weight:700;font-size:15px;
+}
+.merek b{font-size:15px; font-weight:650; letter-spacing:-.01em; white-space:nowrap}
+.merek span{display:block;font-size:11.5px;color:var(--teks-samar);font-weight:400;line-height:1.2}
+.tbl-ikon{
+  width:38px;height:38px;flex:none;display:grid;place-items:center;
+  background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--teks-redup);
+}
+.tbl-ikon:hover{background:var(--hover);color:var(--teks)}
+.tbl-utama{
+  height:38px;padding:0 14px;background:var(--aksen);color:var(--aksen-teks);
+  border:0;border-radius:10px;font-weight:600;font-size:14px;white-space:nowrap;
+}
+.tbl-utama:hover{filter:brightness(1.07)}
+
+/* ── Ringkasan ────────────────────────────────────────────────────────────── */
+.ringkas{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:18px 0}
+.kartu-ringkas{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:13px 14px; box-shadow:var(--bayang);
+}
+.kartu-ringkas .angka{font-size:23px;font-weight:680;letter-spacing:-.02em;line-height:1.15}
+.kartu-ringkas .label{font-size:12px;color:var(--teks-redup);margin-top:2px;display:flex;align-items:center;gap:5px}
+.titik{width:8px;height:8px;border-radius:50%;flex:none}
+.t-aman{background:var(--aman-teks)} .t-tipis{background:var(--tipis-teks)} .t-habis{background:var(--habis-teks)}
+.t-total{background:var(--teks-samar)}
+
+/* ── Panel & toolbar ──────────────────────────────────────────────────────── */
+.panel{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--bayang); overflow:hidden; margin-bottom:18px;
+}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:12px;border-bottom:1px solid var(--border)}
+.cari{position:relative; flex:1 1 220px; min-width:0}
+.cari input{
+  width:100%;height:40px;padding:0 34px 0 36px;background:var(--bg);
+  border:1px solid var(--border);border-radius:10px;
+}
+.cari input::placeholder{color:var(--teks-samar)}
+.cari .kaca{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--teks-samar);pointer-events:none;display:grid}
+.cari .hapus{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:26px;height:26px;border:0;background:transparent;border-radius:6px;color:var(--teks-samar);display:none;place-items:center}
+.cari .hapus:hover{background:var(--hover);color:var(--teks)}
+.cari.terisi .hapus{display:grid}
+select.saring{
+  height:40px;padding:0 30px 0 11px;background:var(--bg);
+  border:1px solid var(--border);border-radius:10px;
+  appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 15px) 18px, calc(100% - 10px) 18px;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+}
+.tab-tampil{display:flex;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px}
+.tab-tampil button{
+  height:32px;padding:0 13px;border:0;background:transparent;border-radius:7px;
+  font-size:13.5px;font-weight:550;color:var(--teks-redup);
+}
+.tab-tampil button[aria-selected="true"]{background:var(--surface);color:var(--teks);box-shadow:var(--bayang)}
+
+/* ── Tabel ────────────────────────────────────────────────────────────────── */
+/* Hanya matriks yang dibungkus .gulir. Tabel utama sengaja TIDAK dibungkus:
+   overflow-x:auto menjadikan pembungkus sebagai kontainer scroll, sehingga
+   `position:sticky` pada thead terhitung relatif ke pembungkus — bukan viewport —
+   dan header justru menempel menutupi baris pertama. Di <=760px tabel utama
+   berubah jadi kartu, jadi tak pernah butuh gulir mendatar. */
+.gulir{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px}
+thead th{
+  position:sticky;top:60px;z-index:10;background:var(--surface);
+  text-align:left;font-size:11.5px;font-weight:620;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--teks-samar);padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap;
+}
+thead th.urut{cursor:pointer;user-select:none}
+thead th.urut:hover{color:var(--teks)}
+thead th .panah{opacity:.35;margin-left:4px;font-size:10px}
+thead th[aria-sort]:not([aria-sort="none"]){color:var(--aksen)}
+thead th[aria-sort]:not([aria-sort="none"]) .panah{opacity:1}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:nth-child(even){background:var(--zebra)}
+/* Header halaman (60px) + header tabel yang menempel di bawahnya — tanpa ini,
+   baris yang di-scroll lewat keyboard mendarat tertutup keduanya. */
+tbody tr{cursor:pointer;scroll-margin-top:112px}
+tbody tr:hover{background:var(--hover)}
+tbody tr:last-child td{border-bottom:0}
+.sel-sku{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+/* Judul marketplace bisa 120+ karakter dan meledakkan tinggi baris. Dipangkas
+   jadi 2 baris; nama pendek yang rapi diatur lewat nama_tampil di sku-tampil.json. */
+.sel-nama{font-weight:520;max-width:42ch}
+.sel-nama>.judul{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sub{display:block;font-size:12px;color:var(--teks-samar);font-weight:400;margin-top:1px}
+.lencana{
+  display:inline-flex;align-items:center;gap:6px;height:25px;padding:0 10px;
+  border-radius:99px;font-size:12.5px;font-weight:600;white-space:nowrap;border:1px solid;
+}
+.l-aman{color:var(--aman-teks);background:var(--aman-bg);border-color:var(--aman-garis)}
+.l-menipis{color:var(--tipis-teks);background:var(--tipis-bg);border-color:var(--tipis-garis)}
+.l-habis{color:var(--habis-teks);background:var(--habis-bg);border-color:var(--habis-garis)}
+.tag{
+  display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:6px;
+  font-size:11.5px;font-weight:600;background:var(--aksen-lembut);color:var(--aksen);
+}
+.eta{font-size:12px;color:var(--teks-redup);white-space:nowrap}
+.sku-hp{display:none}
+.kosong{padding:56px 20px;text-align:center;color:var(--teks-redup)}
+.kosong .besar{font-size:34px;line-height:1;margin-bottom:10px;opacity:.55}
+.kosong b{display:block;color:var(--teks);font-size:15px;margin-bottom:4px}
+
+/* ── Rangka muat ──────────────────────────────────────────────────────────── */
+.rangka{height:13px;border-radius:5px;background:linear-gradient(90deg,var(--border) 25%,var(--hover) 37%,var(--border) 63%);background-size:400% 100%;animation:geser 1.4s ease infinite}
+@keyframes geser{0%{background-position:100% 50%}100%{background-position:0 50%}}
+@media (prefers-reduced-motion:reduce){.rangka{animation:none}}
+
+/* ── Paginasi ─────────────────────────────────────────────────────────────── */
+.paginasi{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 14px;border-top:1px solid var(--border)}
+.paginasi .info{font-size:13px;color:var(--teks-redup);margin-right:auto}
+.paginasi .info b{color:var(--teks);font-weight:600;font-variant-numeric:tabular-nums}
+.hal{display:flex;gap:4px;align-items:center}
+.hal button{
+  min-width:34px;height:34px;padding:0 9px;background:var(--surface);
+  border:1px solid var(--border);border-radius:8px;font-size:13.5px;font-weight:550;
+  font-variant-numeric:tabular-nums;color:var(--teks-redup);
+}
+.hal button:hover:not(:disabled){background:var(--hover);color:var(--teks)}
+.hal button[aria-current="page"]{background:var(--aksen);border-color:var(--aksen);color:var(--aksen-teks)}
+.hal button:disabled{opacity:.4;cursor:not-allowed}
+.hal .elipsis{color:var(--teks-samar);padding:0 2px;font-size:13px}
+.per-hal{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--teks-redup)}
+.per-hal select{height:34px;padding:0 26px 0 9px;border:1px solid var(--border);border-radius:8px;background:var(--surface);appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 13px) 15px, calc(100% - 9px) 15px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+
+/* ── Matriks ──────────────────────────────────────────────────────────────── */
+.matriks-grup{padding:14px;border-bottom:1px solid var(--border)}
+.matriks-grup:last-child{border-bottom:0}
+.matriks-kepala{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:10px}
+.matriks-kepala b{font-size:15px;font-weight:620}
+.matriks-kepala .kode{font-size:12.5px;color:var(--teks-samar);font-variant-numeric:tabular-nums}
+/* width:auto + min-width:100% — kolom mengikuti isinya (lebarnya jadi rata), dan
+   kalau ukurannya banyak, .gulir menggeser mendatar alih-alih memampatkan teks. */
+table.matriks{font-size:13.5px;width:auto;min-width:100%}
+table.matriks th,table.matriks td{border:1px solid var(--border);padding:7px 9px;text-align:center}
+table.matriks thead th{position:static;text-transform:none;letter-spacing:0;font-size:12px;background:var(--zebra)}
+table.matriks tbody th{text-align:left;font-weight:550;white-space:nowrap;background:var(--surface);position:sticky;left:0;z-index:2;font-size:13px}
+table.matriks tbody tr{cursor:default}
+table.matriks tbody tr:hover{background:transparent}
+table.matriks tbody tr:nth-child(even){background:transparent}
+table.matriks tbody tr:nth-child(even) th,table.matriks tbody tr:nth-child(even) td{background:var(--zebra)}
+.sel{display:grid;place-items:center;width:100%;height:26px;border-radius:6px;font-size:11.5px;font-weight:650}
+.s-aman{background:var(--aman-bg);color:var(--aman-teks)}
+.s-menipis{background:var(--tipis-bg);color:var(--tipis-teks)}
+.s-habis{background:var(--habis-bg);color:var(--habis-teks)}
+.s-kosong{color:var(--teks-samar);font-weight:400}
+
+/* ── Modal ────────────────────────────────────────────────────────────────── */
+.tirai{position:fixed;inset:0;z-index:50;background:rgba(10,14,18,.55);display:grid;place-items:center;padding:16px}
+.tirai[hidden]{display:none}
+.modal{
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  width:min(560px,100%);max-height:88vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.modal-kepala{display:flex;align-items:flex-start;gap:12px;padding:16px 16px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:2}
+.modal-kepala h2{margin:0;font-size:16.5px;font-weight:640;letter-spacing:-.01em}
+.modal-kepala p{margin:2px 0 0;font-size:12.5px;color:var(--teks-samar)}
+.modal-kepala .tbl-ikon{margin-left:auto}
+.modal-isi{padding:16px}
+.baris-info{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13.5px}
+.baris-info:last-child{border-bottom:0}
+.baris-info>span{color:var(--teks-redup)}
+.catatan{
+  display:flex;gap:10px;padding:12px;background:var(--aksen-lembut);
+  border-radius:10px;font-size:13px;color:var(--teks-redup);line-height:1.5;margin-top:14px;
+}
+.catatan b{color:var(--teks)}
+
+/* ── Kaki ─────────────────────────────────────────────────────────────────── */
+footer.kaki{padding:18px 0 40px;font-size:12.5px;color:var(--teks-samar);text-align:center;line-height:1.7}
+.sinkron{display:inline-flex;align-items:center;gap:6px}
+.denyut{width:7px;height:7px;border-radius:50%;background:var(--aman-teks)}
+
+/* ── Mobile: tabel jadi kartu ─────────────────────────────────────────────── */
+@media (max-width:820px){
+  .ringkas{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:760px){
+  .atas-isi{height:56px}
+  .merek b{font-size:14px}
+  thead{display:none}
+  table,tbody{display:block;width:100%}
+  /* Kartu padat: 1 baris judul + warna|ukuran sebaris + status|restock sebaris.
+     Tanpa ini satu produk memakan ~500px dan 25 baris jadi gulungan tak berujung. */
+  tbody tr{
+    display:flex;flex-wrap:wrap;
+    border:1px solid var(--border);border-radius:11px;margin:10px;overflow:hidden;
+    background:var(--surface);
+  }
+  tbody tr:nth-child(even){background:var(--zebra)}
+  tbody td{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+    padding:9px 13px;border-bottom:1px solid var(--border);min-height:44px;
+  }
+  tbody td::before{
+    content:attr(data-label);flex:none;font-size:11.5px;font-weight:620;letter-spacing:.04em;
+    text-transform:uppercase;color:var(--teks-samar);
+  }
+  /* Baris 1: judul + badge status (info terpenting, langsung terbaca).
+     Baris 2: warna | ukuran.  Baris 3: restock. */
+  tbody td.utama{
+    flex-direction:column;align-items:flex-start;gap:2px;justify-content:center;
+    padding:11px 4px 11px 13px;order:-2;width:auto;flex:1 1 auto;min-width:0;
+  }
+  tbody td.utama::before{content:none}
+  tbody td[data-label="SKU"]{display:none}
+  .sku-hp{display:inline}
+  tbody td[data-label="Ketersediaan"]{order:-1;width:auto;flex:none;padding-left:0}
+  tbody td[data-label="Ketersediaan"]::before{content:none}
+  tbody td[data-label="Warna"],tbody td[data-label="Ukuran"]{width:50%}
+  tbody td[data-label="Warna"]{border-right:1px solid var(--border)}
+  tbody td[data-label="Restock"]{border-bottom:0}
+  /* Mayoritas baris tidak punya PO berjalan — baris "Restock —" kosong hanya
+     memakan 44px per kartu, jadi disembunyikan saja di HP. */
+  tbody td.tanpa-restock{display:none}
+  tbody td[data-label="Warna"],tbody td[data-label="Ukuran"]{border-bottom:0}
+  tbody td[data-label="Restock"]:not(.tanpa-restock){border-top:1px solid var(--border)}
+  .paginasi{gap:8px}
+  .paginasi .info{width:100%;margin-right:0;order:3;text-align:center}
+  .hal{margin:0 auto}
+  .per-hal{margin:0 auto}
+  /* Matriks tetap tabel sungguhan di HP — kolom ukurannya justru inti bacanya.
+     `thead{display:none}` di atas hanya untuk tabel utama yang berubah jadi kartu. */
+  table.matriks,table.matriks tbody,table.matriks tr,table.matriks td,table.matriks th{display:revert}
+  table.matriks{display:table}
+  table.matriks thead{display:table-header-group}
+  table.matriks tbody th{position:static}
+  table.matriks td::before{content:none}
+  .matriks-grup{padding:12px}
+}
+@media (max-width:420px){
+  .ringkas{gap:8px}
+  .kartu-ringkas .angka{font-size:20px}
+  .tbl-utama{padding:0 11px;font-size:13.5px}
+}
+</style>
+</head>
+<body>
+
+<header class="atas">
+  <div class="wadah atas-isi">
+    <div class="merek">
+      <div class="ikon" aria-hidden="true">W</div>
+      <div>
+        <b>Warehouse Hub</b>
+        <span>Stok gudang untuk reseller</span>
+      </div>
+    </div>
+    <button class="tbl-ikon" id="tblTema" type="button" title="Ganti tema" aria-label="Ganti tema terang / gelap">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/>
+      </svg>
+    </button>
+    <button class="tbl-utama" id="tblMasuk" type="button">Masuk reseller</button>
+  </div>
+</header>
+
+<main class="wadah">
+
+  <section class="ringkas" aria-label="Ringkasan ketersediaan">
+    <div class="kartu-ringkas"><div class="angka" id="nTotal">–</div><div class="label"><i class="titik t-total"></i>Total SKU</div></div>
+    <div class="kartu-ringkas"><div class="angka" id="nAman">–</div><div class="label"><i class="titik t-aman"></i>Stok aman</div></div>
+    <div class="kartu-ringkas"><div class="angka" id="nTipis">–</div><div class="label"><i class="titik t-tipis"></i>Menipis</div></div>
+    <div class="kartu-ringkas"><div class="angka" id="nHabis">–</div><div class="label"><i class="titik t-habis"></i>Habis</div></div>
+  </section>
+
+  <section class="panel">
+    <div class="toolbar">
+      <div class="cari" id="bungkusCari">
+        <span class="kaca" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        </span>
+        <input id="cari" type="search" placeholder="Cari SKU, nama, atau warna…" aria-label="Cari produk" autocomplete="off">
+        <button class="hapus" id="hapusCari" type="button" aria-label="Kosongkan pencarian">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <select class="saring" id="fKategori" aria-label="Saring kategori"><option value="">Semua kategori</option></select>
+      <select class="saring" id="fStatus" aria-label="Saring status">
+        <option value="">Semua status</option>
+        <option value="aman">Stok aman</option>
+        <option value="menipis">Menipis</option>
+        <option value="habis">Habis</option>
+      </select>
+      <select class="saring" id="fSize" aria-label="Saring ukuran"><option value="">Semua ukuran</option></select>
+      <div class="tab-tampil" role="tablist" aria-label="Bentuk tampilan">
+        <button role="tab" id="tabTabel" aria-selected="true" type="button">Tabel</button>
+        <button role="tab" id="tabMatriks" aria-selected="false" type="button">Matriks</button>
+      </div>
+    </div>
+
+    <div id="tampilTabel">
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th class="urut" data-kolom="sku" aria-sort="ascending">SKU<span class="panah">▲</span></th>
+              <th class="urut" data-kolom="nama" aria-sort="none">Produk<span class="panah">▲</span></th>
+              <th class="urut" data-kolom="varian" aria-sort="none">Warna<span class="panah">▲</span></th>
+              <th class="urut" data-kolom="size" aria-sort="none">Ukuran<span class="panah">▲</span></th>
+              <th class="urut" data-kolom="status" aria-sort="none">Ketersediaan<span class="panah">▲</span></th>
+              <th>Restock</th>
+            </tr>
+          </thead>
+          <tbody id="isiTabel"></tbody>
+        </table>
+      </div>
+      <div class="kosong" id="kosongTabel" hidden>
+        <div class="besar" aria-hidden="true">🔍</div>
+        <b>Tidak ada produk yang cocok</b>
+        Coba kata kunci lain atau longgarkan saringannya.
+      </div>
+      <div class="paginasi" id="paginasi">
+        <div class="info" id="infoPaginasi"></div>
+        <div class="hal" id="tombolHal"></div>
+        <label class="per-hal">Tampil
+          <select id="perHal">
+            <option>10</option><option selected>25</option><option>50</option><option>100</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div id="tampilMatriks" hidden></div>
+  </section>
+
+</main>
+
+<footer class="kaki">
+  <div class="wadah">
+    <span class="sinkron"><i class="denyut" aria-hidden="true"></i><span id="waktuSinkron">memuat…</span></span><br>
+    Angka stok pasti hanya tampil setelah masuk sebagai reseller.
+  </div>
+</footer>
+
+<div class="tirai" id="tirai" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="judulModal">
+    <div class="modal-kepala">
+      <div>
+        <h2 id="judulModal"></h2>
+        <p id="subModal"></p>
+      </div>
+      <button class="tbl-ikon" id="tutupModal" type="button" aria-label="Tutup">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-isi" id="isiModal"></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script>
+(function(){
+"use strict";
+
+/* ── Tema ─────────────────────────────────────────────────────────────────── */
+var KUNCI_TEMA = "hub_tema";
+function temaTersimpan(){ try{ return localStorage.getItem(KUNCI_TEMA); }catch(e){ return null; } }
+function pasangTema(t){
+  if(t) document.documentElement.setAttribute("data-tema", t);
+  else document.documentElement.removeAttribute("data-tema");
+  try{ t ? localStorage.setItem(KUNCI_TEMA,t) : localStorage.removeItem(KUNCI_TEMA); }catch(e){}
+}
+pasangTema(temaTersimpan());
+document.getElementById("tblTema").addEventListener("click", function(){
+  var sekarang = document.documentElement.getAttribute("data-tema");
+  if(!sekarang){
+    var gelapSistem = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    sekarang = gelapSistem ? "gelap" : "terang";
+  }
+  pasangTema(sekarang === "gelap" ? "terang" : "gelap");
+});
+
+/* ── Keadaan ──────────────────────────────────────────────────────────────── */
+var semua = [], tersaring = [];
+var kolomUrut = "sku", arahUrut = 1, halaman = 1, perHalaman = 25, bentuk = "tabel";
+
+var URUTAN_STATUS = { habis:0, menipis:1, aman:2 };
+var URUTAN_SIZE = { "S":1,"M":2,"L":3,"XL":4,"XXL":5,"XXXL":6,"All Size":9 };
+var LABEL = { aman:"Stok aman", menipis:"Menipis", habis:"Habis" };
+
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+
+/* ── Ambil data ───────────────────────────────────────────────────────────── */
+function rangkaMuat(){
+  var baris = "";
+  for(var i=0;i<8;i++){
+    baris += '<tr><td colspan="6"><div class="rangka"></div></td></tr>';
+  }
+  document.getElementById("isiTabel").innerHTML = baris;
+}
+
+function muat(){
+  rangkaMuat();
+  var sumber = (window.HUB_DATA_URL || "data/katalog.json") + "?v=" + Date.now();
+  fetch(sumber)
+    .then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function(d){
+      semua = (d.items || []).map(function(it, i){ it._i = i; return it; });
+      isiPilihan();
+      tulisWaktu(d.generated_at);
+      saring();
+    })
+    .catch(function(err){
+      document.getElementById("isiTabel").innerHTML = "";
+      var k = document.getElementById("kosongTabel");
+      k.hidden = false;
+      k.innerHTML = '<div class="besar" aria-hidden="true">⚠️</div><b>Data stok belum bisa dimuat</b>' +
+                    esc(err.message) + '. Coba muat ulang halaman.';
+      document.getElementById("paginasi").hidden = true;
+      document.getElementById("waktuSinkron").textContent = "gagal menyambung";
+    });
+}
+
+function tulisWaktu(iso){
+  var el = document.getElementById("waktuSinkron");
+  if(!iso){ el.textContent = "waktu sinkron tidak diketahui"; return; }
+  var t = new Date(iso);
+  var selisih = Math.round((Date.now() - t.getTime()) / 60000);
+  var relatif;
+  if(selisih < 1) relatif = "baru saja";
+  else if(selisih < 60) relatif = selisih + " menit lalu";
+  else if(selisih < 1440) relatif = Math.round(selisih/60) + " jam lalu";
+  else relatif = Math.round(selisih/1440) + " hari lalu";
+  el.textContent = "Disinkronkan " + relatif;
+  el.title = t.toLocaleString("id-ID");
+}
+
+function isiPilihan(){
+  function isi(id, nilai, urut){
+    var sel = document.getElementById(id);
+    nilai.sort(urut);
+    sel.insertAdjacentHTML("beforeend", nilai.map(function(v){
+      return '<option value="' + esc(v) + '">' + esc(v) + "</option>";
+    }).join(""));
+  }
+  var kat = [], siz = [];
+  semua.forEach(function(it){
+    if(it.kategori && kat.indexOf(it.kategori) < 0) kat.push(it.kategori);
+    if(it.size && siz.indexOf(it.size) < 0) siz.push(it.size);
+  });
+  isi("fKategori", kat, undefined);
+  isi("fSize", siz, function(a,b){ return (URUTAN_SIZE[a]||8) - (URUTAN_SIZE[b]||8) || a.localeCompare(b); });
+}
+
+/* ── Saring & urut ────────────────────────────────────────────────────────── */
+function saring(){
+  var q = document.getElementById("cari").value.trim().toLowerCase();
+  var kat = document.getElementById("fKategori").value;
+  var st  = document.getElementById("fStatus").value;
+  var sz  = document.getElementById("fSize").value;
+
+  document.getElementById("bungkusCari").classList.toggle("terisi", q.length > 0);
+
+  tersaring = semua.filter(function(it){
+    if(kat && it.kategori !== kat) return false;
+    if(st  && it.status   !== st ) return false;
+    if(sz  && it.size     !== sz ) return false;
+    if(!q) return true;
+    return (it.sku + " " + it.nama + " " + it.varian + " " + it.size).toLowerCase().indexOf(q) >= 0;
+  });
+
+  urutkan();
+  halaman = 1;
+  gambar();
+}
+
+function urutkan(){
+  tersaring.sort(function(a,b){
+    var x, y;
+    if(kolomUrut === "status"){ x = URUTAN_STATUS[a.status]; y = URUTAN_STATUS[b.status]; }
+    else if(kolomUrut === "size"){ x = URUTAN_SIZE[a.size]||8; y = URUTAN_SIZE[b.size]||8; }
+    else { x = String(a[kolomUrut]||"").toLowerCase(); y = String(b[kolomUrut]||"").toLowerCase(); }
+    if(x < y) return -1 * arahUrut;
+    if(x > y) return  1 * arahUrut;
+    return a._i - b._i;
+  });
+}
+
+/* ── Gambar ───────────────────────────────────────────────────────────────── */
+function gambar(){
+  if(bentuk === "tabel") gambarTabel();
+  else gambarMatriks();
+  hitungRingkas();
+}
+
+function hitungRingkas(){
+  var n = { aman:0, menipis:0, habis:0 };
+  tersaring.forEach(function(it){ n[it.status] = (n[it.status]||0) + 1; });
+  document.getElementById("nTotal").textContent = tersaring.length.toLocaleString("id-ID");
+  document.getElementById("nAman").textContent  = n.aman.toLocaleString("id-ID");
+  document.getElementById("nTipis").textContent = n.menipis.toLocaleString("id-ID");
+  document.getElementById("nHabis").textContent = n.habis.toLocaleString("id-ID");
+}
+
+function lencana(status){
+  var ikon = status === "aman" ? "●" : status === "menipis" ? "◐" : "○";
+  return '<span class="lencana l-' + status + '"><span aria-hidden="true">' + ikon + "</span>" + LABEL[status] + "</span>";
+}
+
+function tglPendek(iso){
+  var t = new Date(iso + "T00:00:00");
+  return t.toLocaleDateString("id-ID", { day:"numeric", month:"short" });
+}
+
+function gambarTabel(){
+  var total = tersaring.length;
+  var maksHal = Math.max(1, Math.ceil(total / perHalaman));
+  if(halaman > maksHal) halaman = maksHal;
+  var mulai = (halaman - 1) * perHalaman;
+  var potong = tersaring.slice(mulai, mulai + perHalaman);
+
+  document.getElementById("kosongTabel").hidden = total > 0;
+  document.getElementById("paginasi").hidden = total === 0;
+
+  document.getElementById("isiTabel").innerHTML = potong.map(function(it){
+    var adaRestock = !!it.restock;
+    var restock = adaRestock
+      ? '<span class="eta">± ' + esc(tglPendek(it.restock.eta)) + "</span>"
+      : '<span class="eta" style="opacity:.5">—</span>';
+    return '<tr tabindex="0" data-sku="' + esc(it.sku) + '">' +
+      '<td class="sel-sku" data-label="SKU">' + esc(it.sku) + "</td>" +
+      '<td class="utama sel-nama" data-label="Produk"><span class="judul" title="' + esc(it.nama) + '">' +
+        esc(it.nama) + "</span>" +
+        (it.laris ? ' <span class="tag">★ Laris</span>' : "") +
+        '<span class="sub"><span class="sku-hp">' + esc(it.sku) + " · </span>" + esc(it.kategori) + "</span></td>" +
+      '<td data-label="Warna">' + esc(it.varian) + "</td>" +
+      '<td data-label="Ukuran">' + esc(it.size) + "</td>" +
+      '<td data-label="Ketersediaan">' + lencana(it.status) + "</td>" +
+      '<td data-label="Restock"' + (adaRestock ? "" : ' class="tanpa-restock"') + ">" + restock + "</td>" +
+    "</tr>";
+  }).join("");
+
+  var akhir = Math.min(mulai + perHalaman, total);
+  document.getElementById("infoPaginasi").innerHTML = total
+    ? "Menampilkan <b>" + (mulai + 1) + "–" + akhir + "</b> dari <b>" + total.toLocaleString("id-ID") + "</b> baris"
+    : "";
+  gambarTombolHal(maksHal);
+}
+
+function gambarTombolHal(maks){
+  var h = [];
+  h.push('<button type="button" data-hal="' + (halaman-1) + '"' + (halaman<=1?" disabled":"") + ' aria-label="Halaman sebelumnya">‹</button>');
+  var daftar = [];
+  for(var i=1;i<=maks;i++){
+    if(i===1 || i===maks || Math.abs(i-halaman)<=1) daftar.push(i);
+    else if(daftar[daftar.length-1] !== "…") daftar.push("…");
+  }
+  daftar.forEach(function(i){
+    if(i === "…") h.push('<span class="elipsis">…</span>');
+    else h.push('<button type="button" data-hal="' + i + '"' + (i===halaman?' aria-current="page"':"") + ">" + i + "</button>");
+  });
+  h.push('<button type="button" data-hal="' + (halaman+1) + '"' + (halaman>=maks?" disabled":"") + ' aria-label="Halaman berikutnya">›</button>');
+  document.getElementById("tombolHal").innerHTML = h.join("");
+}
+
+function kelompok(){
+  var peta = {}, urut = [];
+  tersaring.forEach(function(it){
+    if(!peta[it.sku]){ peta[it.sku] = { sku:it.sku, nama:it.nama, kategori:it.kategori, baris:[] }; urut.push(it.sku); }
+    peta[it.sku].baris.push(it);
+  });
+  return urut.map(function(s){ return peta[s]; });
+}
+
+function gambarMatriks(){
+  var grup = kelompok();
+  var wadah = document.getElementById("tampilMatriks");
+  if(!grup.length){
+    wadah.innerHTML = '<div class="kosong"><div class="besar" aria-hidden="true">🔍</div>' +
+      "<b>Tidak ada produk yang cocok</b>Coba kata kunci lain atau longgarkan saringannya.</div>";
+    return;
+  }
+  wadah.innerHTML = grup.map(function(g){
+    var varian = [], size = [];
+    g.baris.forEach(function(it){
+      if(varian.indexOf(it.varian) < 0) varian.push(it.varian);
+      if(size.indexOf(it.size) < 0) size.push(it.size);
+    });
+    size.sort(function(a,b){ return (URUTAN_SIZE[a]||8) - (URUTAN_SIZE[b]||8) || a.localeCompare(b); });
+    var peta = {};
+    g.baris.forEach(function(it){ peta[it.varian + "||" + it.size] = it.status; });
+
+    var kepala = size.map(function(s){ return "<th>" + esc(s) + "</th>"; }).join("");
+    var isi = varian.map(function(v){
+      var sel = size.map(function(s){
+        var st = peta[v + "||" + s];
+        if(!st) return '<td><span class="sel s-kosong">–</span></td>';
+        var teks = st === "aman" ? "Aman" : st === "menipis" ? "Menipis" : "Habis";
+        return '<td><span class="sel s-' + st + '">' + teks + "</span></td>";
+      }).join("");
+      return "<tr><th>" + esc(v) + "</th>" + sel + "</tr>";
+    }).join("");
+
+    return '<div class="matriks-grup">' +
+      '<div class="matriks-kepala"><b>' + esc(g.nama) + '</b><span class="kode">' + esc(g.sku) + " · " + esc(g.kategori) + "</span></div>" +
+      '<div class="gulir"><table class="matriks"><thead><tr><th>Warna</th>' + kepala + "</tr></thead><tbody>" + isi + "</tbody></table></div>" +
+    "</div>";
+  }).join("");
+}
+
+/* ── Modal detail ─────────────────────────────────────────────────────────── */
+var pemicuTerakhir = null;
+
+function bukaDetail(sku, pemicu){
+  var baris = semua.filter(function(it){ return it.sku === sku; });
+  if(!baris.length) return;
+  var p = baris[0];
+  pemicuTerakhir = pemicu || null;
+
+  var n = { aman:0, menipis:0, habis:0 };
+  baris.forEach(function(it){ n[it.status]++; });
+  var restock = baris.filter(function(it){ return it.restock; });
+
+  document.getElementById("judulModal").textContent = p.nama;
+  document.getElementById("subModal").textContent = p.sku + " · " + p.kategori;
+
+  var varian = [], size = [];
+  baris.forEach(function(it){
+    if(varian.indexOf(it.varian) < 0) varian.push(it.varian);
+    if(size.indexOf(it.size) < 0) size.push(it.size);
+  });
+  size.sort(function(a,b){ return (URUTAN_SIZE[a]||8) - (URUTAN_SIZE[b]||8) || a.localeCompare(b); });
+  var peta = {};
+  baris.forEach(function(it){ peta[it.varian + "||" + it.size] = it.status; });
+
+  var kepala = size.map(function(s){ return "<th>" + esc(s) + "</th>"; }).join("");
+  var isiMatriks = varian.map(function(v){
+    var sel = size.map(function(s){
+      var st = peta[v + "||" + s];
+      if(!st) return '<td><span class="sel s-kosong">–</span></td>';
+      var teks = st === "aman" ? "Aman" : st === "menipis" ? "Menipis" : "Habis";
+      return '<td><span class="sel s-' + st + '">' + teks + "</span></td>";
+    }).join("");
+    return "<tr><th>" + esc(v) + "</th>" + sel + "</tr>";
+  }).join("");
+
+  var etaTeks = restock.length
+    ? "± " + tglPendek(restock[0].restock.eta) + " (" + restock.length + " varian)"
+    : "belum ada PO berjalan";
+
+  document.getElementById("isiModal").innerHTML =
+    '<div class="baris-info"><span>Varian tersedia</span><b>' + varian.length + " warna × " + size.length + " ukuran</b></div>" +
+    '<div class="baris-info"><span>Stok aman</span><b>' + n.aman + " dari " + baris.length + " kombinasi</b></div>" +
+    '<div class="baris-info"><span>Perlu perhatian</span><b>' + (n.menipis + n.habis) + " kombinasi</b></div>" +
+    '<div class="baris-info"><span>Perkiraan restock</span><b>' + esc(etaTeks) + "</b></div>" +
+    '<div class="gulir" style="margin-top:14px"><table class="matriks"><thead><tr><th>Warna</th>' + kepala +
+      "</tr></thead><tbody>" + isiMatriks + "</tbody></table></div>" +
+    '<div class="catatan"><span aria-hidden="true">🔒</span><div><b>Angka stok pasti disembunyikan.</b> ' +
+      "Masuk dengan kode reseller untuk melihat jumlah persis dan saran stok aman untuk toko Anda.</div></div>";
+
+  var tirai = document.getElementById("tirai");
+  tirai.hidden = false;
+  document.getElementById("tutupModal").focus();
+}
+
+function tutup(){
+  document.getElementById("tirai").hidden = true;
+  if(pemicuTerakhir && document.contains(pemicuTerakhir)) pemicuTerakhir.focus();
+}
+
+/* ── Peristiwa ────────────────────────────────────────────────────────────── */
+var jeda;
+document.getElementById("cari").addEventListener("input", function(){
+  clearTimeout(jeda);
+  jeda = setTimeout(saring, 180);
+});
+document.getElementById("hapusCari").addEventListener("click", function(){
+  var c = document.getElementById("cari");
+  c.value = ""; c.focus(); saring();
+});
+["fKategori","fStatus","fSize"].forEach(function(id){
+  document.getElementById(id).addEventListener("change", saring);
+});
+document.getElementById("perHal").addEventListener("change", function(){
+  perHalaman = parseInt(this.value, 10); halaman = 1; gambar();
+});
+document.getElementById("tombolHal").addEventListener("click", function(e){
+  var b = e.target.closest("button[data-hal]");
+  if(!b || b.disabled) return;
+  halaman = parseInt(b.dataset.hal, 10);
+  gambar();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+document.querySelectorAll("thead th.urut").forEach(function(th){
+  th.addEventListener("click", function(){
+    var k = th.dataset.kolom;
+    if(kolomUrut === k) arahUrut *= -1; else { kolomUrut = k; arahUrut = 1; }
+    document.querySelectorAll("thead th.urut").forEach(function(o){ o.setAttribute("aria-sort", "none"); });
+    th.setAttribute("aria-sort", arahUrut === 1 ? "ascending" : "descending");
+    th.querySelector(".panah").textContent = arahUrut === 1 ? "▲" : "▼";
+    urutkan(); gambar();
+  });
+});
+document.getElementById("isiTabel").addEventListener("click", function(e){
+  var tr = e.target.closest("tr[data-sku]");
+  if(tr) bukaDetail(tr.dataset.sku, tr);
+});
+document.getElementById("isiTabel").addEventListener("keydown", function(e){
+  if(e.key !== "Enter" && e.key !== " ") return;
+  var tr = e.target.closest("tr[data-sku]");
+  if(tr){ e.preventDefault(); bukaDetail(tr.dataset.sku, tr); }
+});
+document.getElementById("tutupModal").addEventListener("click", tutup);
+document.getElementById("tirai").addEventListener("click", function(e){
+  if(e.target === this) tutup();
+});
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape" && !document.getElementById("tirai").hidden) tutup();
+});
+
+function gantiBentuk(baru){
+  bentuk = baru;
+  var t = baru === "tabel";
+  document.getElementById("tabTabel").setAttribute("aria-selected", String(t));
+  document.getElementById("tabMatriks").setAttribute("aria-selected", String(!t));
+  document.getElementById("tampilTabel").hidden = !t;
+  document.getElementById("tampilMatriks").hidden = t;
+  gambar();
+}
+document.getElementById("tabTabel").addEventListener("click", function(){ gantiBentuk("tabel"); });
+document.getElementById("tabMatriks").addEventListener("click", function(){ gantiBentuk("matriks"); });
+
+document.getElementById("tblMasuk").addEventListener("click", function(){
+  document.getElementById("judulModal").textContent = "Masuk sebagai reseller";
+  document.getElementById("subModal").textContent = "Untuk melihat angka stok pasti";
+  document.getElementById("isiModal").innerHTML = window.HUB_API_URL
+    ? "<p>Formulir masuk akan tampil di sini.</p>"
+    : '<div class="catatan"><span aria-hidden="true">🧪</span><div><b>Mode pratinjau.</b> ' +
+      "Login reseller aktif setelah lapisan data reseller tersambung. Sekarang halaman ini " +
+      "memakai data contoh supaya tampilannya bisa dinilai dulu.</div></div>";
+  var tirai = document.getElementById("tirai");
+  pemicuTerakhir = this;
+  tirai.hidden = false;
+  document.getElementById("tutupModal").focus();
+});
+
+muat();
+})();
+</script>
+</body>
+</html>

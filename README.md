@@ -1,1 +1,122 @@
-# warehouse-hub
+# Warehouse Hub
+
+Etalase stok gudang untuk reseller. Satu berkas HTML statis — tanpa server, tanpa build,
+tanpa dependensi — diterbitkan gratis lewat GitHub Pages.
+
+Sumber stok adalah WMS di [portal.nawinow.com](https://portal.nawinow.com/). Hub ini
+**read-only**: satu-satunya kebenaran stok tetap di WMS.
+
+## Status
+
+| Fase | Isi | Status |
+|---|---|---|
+| **1a** | Kerangka UI + katalog stok | ✅ selesai |
+| **1b** | Sinkron GitHub Actions dari WMS + whitelist SKU | ✅ selesai — tinggal pasang secret |
+| **1c** | Lapisan reseller: login, angka pasti, stok toko | belum |
+| **2** | Watchlist, alert restock, draft pesanan, PWA, tren stok | belum |
+
+## Menjalankan secara lokal
+
+```bash
+python -m http.server 5177
+# lalu buka http://127.0.0.1:5177
+```
+
+Harus lewat server, bukan `file://` — halaman mengambil `data/katalog.json` dengan `fetch`,
+dan `file://` diblokir CORS.
+
+## Apa yang sudah ada (fase 1a)
+
+- Tabel katalog: cari, saring kategori/status/ukuran, urut per kolom, paginasi 10/25/50/100
+- Baris zebra, header tabel menempel, baris bisa dibuka dengan Enter (bukan cuma klik)
+- Tampilan **Matriks** — warna × ukuran per SKU, cara baca yang tepat untuk abaya & hijab
+- Detail per SKU: jumlah kombinasi aman, perkiraan restock, matriks lengkap
+- Mode terang & gelap: mengikuti setelan sistem, bisa ditimpa manual, tersimpan di browser
+- Di HP tabel berubah jadi kartu padat; matriks tetap tabel dengan gulir mendatar
+- Status ditandai ikon **dan** teks, tidak hanya warna
+
+## Keamanan tampilan
+
+Repo GitHub Pages gratis harus public, jadi isi `data/katalog.json` ikut terbaca siapa pun.
+Karena itu pemisahannya tegas:
+
+| Jalur | Isi | Pembaca |
+|---|---|---|
+| `data/katalog.json` (ditulis Actions) | SKU whitelist + **status saja** | publik |
+| Apps Script (setelah kode reseller) | angka stok pasti + insight pribadi | reseller |
+
+Dua aturan yang tidak boleh dilanggar:
+
+1. **Angka stok pasti tidak pernah di-commit ke repo.**
+2. **Penyaringan whitelist SKU terjadi di lapisan sinkron, bukan di browser.** SKU yang
+   tidak boleh tampil harus tidak pernah terkirim — menyembunyikannya dengan JavaScript
+   percuma, datanya tetap terbaca di *view-source*.
+
+## Sinkron dengan WMS
+
+Tanpa mengubah satu baris pun kode WMS — repo `mitshuno/picking-packing` tidak disentuh.
+[`.github/workflows/sinkron-stok.yml`](.github/workflows/sinkron-stok.yml) menjalankan
+[`scripts/sinkron.py`](scripts/sinkron.py) tiap 20 menit:
+
+1. `POST /api/v1/auth/login` ke Portal → access token
+2. `GET /wms/api/reports/product-analytics` → satu panggilan, sudah memuat stok,
+   laju jual, `days_of_stock`, dan klasifikasi fast/slow
+3. Saring lewat `sku-tampil.json`, ubah angka jadi status, tulis `data/katalog.json`
+4. Periksa ulang keluaran — bila ada satu saja nilai angka, workflow berhenti sebelum commit
+5. Commit hanya bila isinya berubah
+
+Skripnya memakai pustaka standar Python saja — tidak ada `pip install`.
+
+### Secret yang harus dipasang
+
+**Settings → Secrets and variables → Actions → New repository secret**
+
+| Nama | Isi |
+|---|---|
+| `PORTAL_USER` | username akun Portal untuk sinkron |
+| `PORTAL_PASS` | password akun tersebut |
+
+Jangan pernah menaruh keduanya di berkas mana pun dalam repo ini.
+
+### Mengatur SKU mana yang tampil
+
+Sunting [`sku-tampil.json`](sku-tampil.json) — bisa langsung dari web GitHub, tanpa buka laptop.
+
+```jsonc
+"MUSKIYA01": { "tampil": true, "kategori": "Abaya", "nama_tampil": "" }
+```
+
+- `tampil: false` → SKU tidak pernah terkirim ke browser sama sekali
+- `nama_tampil` kosong → pakai nama dari WMS. Diisi untuk merapikan judul marketplace yang panjang
+- **SKU baru di WMS tidak otomatis muncul** — harus didaftarkan dulu di sini. Sengaja:
+  dengan daftar-larangan, tiap produk baru akan bocor ke publik sebelum sempat ditinjau.
+  Workflow mencetak daftar SKU baru yang belum terdaftar di log Actions.
+
+Ambang status juga diatur di berkas yang sama:
+
+```jsonc
+"ambang": { "menipis_hari": 14, "menipis_qty": 5 }
+```
+
+`menipis_qty` adalah pengaman mutlak: produk yang jarang laku punya `days_of_stock`
+raksasa padahal fisiknya tinggal beberapa potong — tanpa ambang ini ia terbaca "aman".
+
+## Struktur berkas
+
+| Berkas | Isi |
+|---|---|
+| `index.html` | Seluruh aplikasi — tampilan, penyaringan, paginasi, matriks |
+| `config.js` | Dua baris: lokasi data + URL Apps Script (kosong = mode pratinjau) |
+| `sku-tampil.json` | Daftar-izin SKU + kategori + ambang status. Berkas yang Anda sunting |
+| `scripts/sinkron.py` | Penarik stok dari WMS. Pustaka standar saja |
+| `.github/workflows/sinkron-stok.yml` | Penjadwal sinkron tiap 20 menit |
+| `data/katalog.json` | Katalog stok — ditulis otomatis, jangan disunting tangan |
+| `.nojekyll` | Melewati pemrosesan Jekyll di GitHub Pages |
+
+## Publikasi lewat GitHub Pages
+
+1. Repo: [mitshuno/warehouse-hub](https://github.com/mitshuno/warehouse-hub) — harus **public**.
+2. **Settings → Pages** → Source: *Deploy from a branch*.
+3. Branch `main`, folder `/ (root)`, **Save**.
+
+Setiap `git push` berikutnya otomatis memperbarui situs.

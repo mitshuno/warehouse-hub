@@ -1,0 +1,64 @@
+name: Sinkron stok dari WMS
+
+on:
+  schedule:
+    # Tiap 20 menit. GitHub sering menunda cron beberapa menit saat sibuk —
+    # itu wajar, halaman menampilkan "disinkronkan N menit lalu" apa adanya.
+    - cron: "*/20 * * * *"
+  workflow_dispatch:        # tombol jalankan manual di tab Actions
+
+concurrency:
+  group: sinkron-stok
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sinkron:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Tanpa pip install — skripnya hanya memakai pustaka standar.
+      - name: Tarik stok dan tulis katalog
+        env:
+          PORTAL_USER: ${{ secrets.PORTAL_USER }}
+          PORTAL_PASS: ${{ secrets.PORTAL_PASS }}
+        run: python scripts/sinkron.py
+
+      - name: Pastikan tidak ada angka stok yang ikut terbawa
+        # Pagar terakhir sebelum commit: repo ini public, jadi satu kolom angka
+        # yang lolos sama saja membuka stok gudang ke siapa pun.
+        run: |
+          python - <<'PY'
+          import json, sys
+          d = json.load(open("data/katalog.json", encoding="utf-8"))
+          izin = {"sku","nama","kategori","varian","size","status","laris","restock"}
+          for baris in d["items"]:
+              lebih = set(baris) - izin
+              if lebih:
+                  sys.exit(f"Kolom tak terduga di keluaran: {lebih}")
+              for k, v in baris.items():
+                  if isinstance(v, (int, float)) and not isinstance(v, bool):
+                      sys.exit(f"Angka bocor di {baris['sku']}.{k} = {v}")
+          print(f"Aman — {len(d['items'])} baris, tanpa angka stok.")
+          PY
+
+      - name: Commit bila ada perubahan
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/katalog.json
+          if git diff --staged --quiet; then
+            echo "Stok tidak berubah — tidak ada commit."
+          else
+            git commit -m "Sinkron stok $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
