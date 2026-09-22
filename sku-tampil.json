@@ -455,6 +455,26 @@
    "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
+  },
+  "DSTR6": {
+   "tampil": false,
+   "kategori": "Daster",
+   "nama_tampil": ""
+  },
+  "DSTR7": {
+   "tampil": false,
+   "kategori": "Daster",
+   "nama_tampil": ""
+  },
+  "DSTR8": {
+   "tampil": false,
+   "kategori": "Daster",
+   "nama_tampil": ""
+  },
+  "DSTR9": {
+   "tampil": false,
+   "kategori": "Daster",
+   "nama_tampil": ""
   }
  }
 }
