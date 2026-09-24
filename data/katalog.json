@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-24T01:29:36Z",
+ "generated_at": "2026-09-24T06:45:24Z",
  "mode": "status",
  "sumber": "wms",
  "items": [
@@ -99,7 +99,7 @@
    "kategori": "Daster",
    "varian": "Maroon Muda",
    "size": "ALL SIZE",
-   "status": "aman",
+   "status": "menipis",
    "laris": false,
    "restock": null
   }
