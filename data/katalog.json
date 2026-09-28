@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-28T01:46:18Z",
+ "generated_at": "2026-09-28T08:35:44Z",
  "mode": "status",
  "sumber": "wms",
  "items": [
@@ -89,7 +89,7 @@
    "kategori": "Daster",
    "varian": "Coklat Brown",
    "size": "ALL SIZE",
-   "status": "habis",
+   "status": "menipis",
    "laris": false,
    "restock": null
   },
