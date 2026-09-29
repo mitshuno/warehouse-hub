@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-29T02:18:26Z",
+ "generated_at": "2026-09-29T08:46:29Z",
  "mode": "status",
  "sumber": "wms",
  "items": [
@@ -79,7 +79,7 @@
    "kategori": "Daster",
    "varian": "Burgundy",
    "size": "ALL SIZE",
-   "status": "habis",
+   "status": "menipis",
    "laris": false,
    "restock": null
   },
