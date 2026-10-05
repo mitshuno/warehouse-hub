@@ -635,6 +635,21 @@
    "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
+  },
+  "DSTR16": {
+   "tampil": false,
+   "kategori": "Daster",
+   "nama_tampil": ""
+  },
+  "DSTR17": {
+   "tampil": false,
+   "kategori": "Daster",
+   "nama_tampil": ""
+  },
+  "MUSKIYA14": {
+   "tampil": false,
+   "kategori": "Abaya",
+   "nama_tampil": ""
   }
  }
 }
