@@ -650,6 +650,16 @@
    "tampil": false,
    "kategori": "Abaya",
    "nama_tampil": ""
+  },
+  "DEFECT": {
+   "tampil": false,
+   "kategori": "Lainnya",
+   "nama_tampil": ""
+  },
+  "DSTR18": {
+   "tampil": false,
+   "kategori": "Daster",
+   "nama_tampil": ""
   }
  }
 }
