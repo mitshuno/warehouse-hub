@@ -710,6 +710,41 @@
    "tampil": false,
    "kategori": "Lainnya",
    "nama_tampil": ""
+  },
+  "HAURA01": {
+   "tampil": false,
+   "kategori": "Hijab",
+   "nama_tampil": ""
+  },
+  "HAURA02": {
+   "tampil": false,
+   "kategori": "Hijab",
+   "nama_tampil": ""
+  },
+  "HAURA03": {
+   "tampil": false,
+   "kategori": "Hijab",
+   "nama_tampil": ""
+  },
+  "HAURA04": {
+   "tampil": false,
+   "kategori": "Hijab",
+   "nama_tampil": ""
+  },
+  "HAURA05": {
+   "tampil": false,
+   "kategori": "Hijab",
+   "nama_tampil": ""
+  },
+  "HAURA06": {
+   "tampil": false,
+   "kategori": "Hijab",
+   "nama_tampil": ""
+  },
+  "HAURA07": {
+   "tampil": false,
+   "kategori": "Hijab",
+   "nama_tampil": ""
   }
  }
 }
