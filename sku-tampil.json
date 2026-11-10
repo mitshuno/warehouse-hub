@@ -745,6 +745,36 @@
    "tampil": false,
    "kategori": "Hijab",
    "nama_tampil": ""
+  },
+  "ZFR01V2L": {
+   "tampil": false,
+   "kategori": "Abaya",
+   "nama_tampil": ""
+  },
+  "ZFR01V2M": {
+   "tampil": false,
+   "kategori": "Abaya",
+   "nama_tampil": ""
+  },
+  "ZFR03V2L": {
+   "tampil": false,
+   "kategori": "Abaya",
+   "nama_tampil": ""
+  },
+  "ZFR03V2M": {
+   "tampil": false,
+   "kategori": "Abaya",
+   "nama_tampil": ""
+  },
+  "ZFR06V2L": {
+   "tampil": false,
+   "kategori": "Abaya",
+   "nama_tampil": ""
+  },
+  "ZFR06V2M": {
+   "tampil": false,
+   "kategori": "Abaya",
+   "nama_tampil": ""
   }
  }
 }
